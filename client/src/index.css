@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: lato;
+    src: url(./assets/fonts/lato/Lato-Bold.ttf);
+}
+
+@font-face {
+    font-family: main;
+    src: url(./assets/fonts/Urbanist-VariableFont_wght.ttf);
+}
+
+@font-face {
+    font-family: halo;
+    src: url(./assets/fonts/halogen/Halogen-Medium.otf);
+}
+
+@theme{
+    --font-lato: "lato", "sans-serif"; 
+    --font-main: "main", "sans-serif"; 
+    --font-halo: "halo", "sans-serif"; 
+}
+
+@theme{
+    --color-dark: #171717; 
+    --color-green: #b8f011; 
+}
+
+body{
+    overflow-x: hidden;
+}
+
+
