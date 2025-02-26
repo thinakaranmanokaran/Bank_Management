@@ -10,3 +10,8 @@ export {default as AdminProfile } from './admin/Profile';
 //User
 export {default as UserDashBoard } from './user/DashBoard';
 export {default as UserProfile } from './user/Profile';
+export {default as UserHome } from './user/Home';
+export {default as UserFAQ } from './user/FAQ';
+export {default as UserServices } from './user/Services';
+export {default as UserWallet } from './user/Wallet';
+export {default as UserTransactions } from './user/Transactions';

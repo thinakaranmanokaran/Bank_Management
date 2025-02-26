@@ -5,3 +5,4 @@ export { default as InputBox } from './global/InputBox'
 export { default as AdminHeader } from './admin/Header'
 
 export { default as UserHeader } from './user/Header'
+export { default as UserProfile } from './user/Profile'

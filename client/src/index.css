@@ -15,10 +15,22 @@
     src: url(./assets/fonts/halogen/Halogen-Medium.otf);
 }
 
+@font-face {
+    font-family: sfpro;
+    src: url(./assets/fonts/sanfrancisco/SF-Pro-Rounded-Medium.otf);
+}
+
+@font-face {
+    font-family: gotham;
+    src: url(./assets/fonts/gotham/Gotham-Medium.otf);
+}
+
 @theme{
     --font-lato: "lato", "sans-serif"; 
     --font-main: "main", "sans-serif"; 
     --font-halo: "halo", "sans-serif"; 
+    --font-sfpro: "sfpro", "sans-serif"; 
+    --font-gotham: "gotham", "sans-serif"; 
 }
 
 @theme{
