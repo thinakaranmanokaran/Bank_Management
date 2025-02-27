@@ -25,12 +25,18 @@
     src: url(./assets/fonts/gotham/Gotham-Medium.otf);
 }
 
+@font-face {
+    font-family: jet;
+    src: url(./assets/fonts/space/SpaceGrotesk-Regular.ttf);
+}
+
 @theme{
     --font-lato: "lato", "sans-serif"; 
     --font-main: "main", "sans-serif"; 
     --font-halo: "halo", "sans-serif"; 
     --font-sfpro: "sfpro", "sans-serif"; 
     --font-gotham: "gotham", "sans-serif"; 
+    --font-jet: "jet", "sans-serif"; 
 }
 
 @theme{

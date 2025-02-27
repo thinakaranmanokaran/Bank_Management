@@ -46,7 +46,7 @@ const Profile = () => {
                     <img src={images.Profile} alt="" srcset="" className='w-full max-w-48 rounded-full ' />
                 </div>
                 <div className='flex-col items-center px-4 mb-6 ' >
-                    <div className='text-2xl font-gotham' >{currentUser.name}</div>
+                    <div className='text-2xl font-gotham text-center' >{currentUser.name}</div>
                     <div className='font-main opacity-60 text-center' >{currentUser.email}</div>
                 </div>
                 <div className='h-fit   rounded-2xl p-4 bg-green text-dark space-y-4' >
