@@ -43,7 +43,7 @@ exports.registerUser = async (req, res) => {
 // Register a new user
 
 // Check if user exists (Login)
-exports.addUser = async (req, res) => {
+exports.signinUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
