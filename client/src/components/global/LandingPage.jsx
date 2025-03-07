@@ -1,45 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import images from '../../assets/images'
-import { jwtDecode } from 'jwt-decode';
-import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom'; // Import useNavigate
 import { HiArrowUpRight } from "react-icons/hi2";
-const API_URL = import.meta.env.VITE_API_URL; // Using environment variable
+import { useAuth } from "./../../contexts";
+import { Link } from "react-router-dom";
 
 const LandingPage = () => {
 
-    const [users, setUsers] = useState([]);
-    const [currentUser, setCurrentUser] = useState(null);
-    const navigate = useNavigate(); // Initialize navigate function
-
-    const fetchUsers = async () => {
-        try {
-            const response = await axios.get(`${API_URL}/api/users/register`);
-            setUsers(response.data);
-        } catch (error) {
-            console.error("Error fetching users:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchUsers();
-
-        // Check token on app load
-        const token = localStorage.getItem("token");
-
-        if (token) {
-            const decoded = jwtDecode(token);
-            setCurrentUser(decoded);
-            console.log(localStorage.getItem("token"));
-        } else {
-            // Redirect to login if token is missing
-            navigate('/signin');
-        }
-    }, [navigate]);
-
-    if (!currentUser) {
-        return <div className="text-center text-xl mt-10">Redirecting to login...</div>;
-    }
+    const { currentUser } = useAuth();
 
     return (
         <div className=' bg-dark w-full h-full p-16 px-32 text-white ' >

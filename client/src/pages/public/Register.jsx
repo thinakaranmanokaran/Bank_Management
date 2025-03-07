@@ -14,9 +14,8 @@ const Register = () => {
         dob: '',
     });
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+    const generateAccountNo = () => {
+        return Math.floor(100000000000 + Math.random() * 900000000000).toString();
     };
 
     const handleSubmit = async (e) => {
@@ -28,13 +27,13 @@ const Register = () => {
                 body: JSON.stringify(formData),
             });
 
-            // Check if the response is empty
             const text = await response.text();
             const data = text ? JSON.parse(text) : {};
 
             if (response.ok && data.success) {
                 alert('User registered successfully!');
                 localStorage.setItem('token', data.token);
+                handleAccInfo(formData.email);
                 setFormData({ name: '', email: '', phone: '', password: '', gender: '', dob: '' });
             } else {
                 alert(data.message || 'Something went wrong!');
@@ -45,6 +44,32 @@ const Register = () => {
         }
     };
 
+    const handleAccInfo = async (email) => {
+        try {
+            const response = await fetch(`${API_URL}/api/users/balance`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok && data.success) {
+                alert(`Account created successfully! Your Account Number: ${data.accountno}`);
+            } else {
+                alert(data.message || 'Something went wrong!');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while creating the account.');
+        }
+    };
+    
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
 
     return (
         <div>
@@ -53,38 +78,30 @@ const Register = () => {
                     <h2 className='font-lato text-3xl mb-12'>Register</h2>
 
                     <div className='w-full min-w-[40vw]'>
-                        <InputBox labelText='Name' inputType='text' parenCN='font-main' inputName="name" inputValue={formData.name} inputChange={handleInputChange} />
+                        <InputBox labelText='Name' inputType='text' inputName="name" inputValue={formData.name} inputChange={handleInputChange} />
                     </div>
                     <div className='w-full min-w-[40vw]'>
-                        <InputBox labelText='E-mail' inputType='email' parenCN='font-main' inputName="email" inputValue={formData.email} inputChange={handleInputChange} />
+                        <InputBox labelText='E-mail' inputType='email' inputName="email" inputValue={formData.email} inputChange={handleInputChange} />
                     </div>
                     <div className='w-full min-w-[40vw]'>
-                        <InputBox labelText='Password' inputType='password' showPassword='yes' parenCN='font-main' inputName="password" inputValue={formData.password} inputChange={handleInputChange} />
+                        <InputBox labelText='Password' inputType='password' inputName="password" inputValue={formData.password} inputChange={handleInputChange} />
                     </div>
                     <div className='w-full min-w-[40vw]'>
-                        <InputBox labelText='Phone' inputType='number' parenCN='font-main' inputName="phone" inputValue={formData.phone} inputChange={handleInputChange} />
+                        <InputBox labelText='Phone' inputType='number' inputName="phone" inputValue={formData.phone} inputChange={handleInputChange} />
                     </div>
 
-                    {/* Gender Selection */}
                     <div className='flex space-x-4 mt-2 mb-5 justify-start w-full'>
-                        <div>
-                            <input type="radio" name="gender" id="male" value="Male" checked={formData.gender === "Male"} onChange={handleInputChange} className='hidden peer' />
-                            <label htmlFor="male" className='bg-[#ffffff10] px-6 py-2 rounded-2xl border-[1px] hover:bg-[#ffffff20] peer-checked:border-green cursor-pointer transition-all duration-300'>Male</label>
-                        </div>
-                        <div>
-                            <input type="radio" name="gender" id="female" value="Female" checked={formData.gender === "Female"} onChange={handleInputChange} className='hidden peer' />
-                            <label htmlFor="female" className='bg-[#ffffff10] px-6 py-2 rounded-2xl border-[1px] hover:bg-[#ffffff20] peer-checked:border-green cursor-pointer transition-all duration-300'>Female</label>
-                        </div>
-                        <div>
-                            <input type="radio" name="gender" id="other" value="Other" checked={formData.gender === "Other"} onChange={handleInputChange} className='hidden peer' />
-                            <label htmlFor="other" className='bg-[#ffffff10] px-6 py-2 rounded-2xl border-[1px] hover:bg-[#ffffff20] peer-checked:border-green cursor-pointer transition-all duration-300'>Other</label>
-                        </div>
+                        {['Male', 'Female', 'Other'].map((gender) => (
+                            <div key={gender}>
+                                <input type="radio" name="gender" id={gender.toLowerCase()} value={gender} checked={formData.gender === gender} onChange={handleInputChange} className='hidden peer' />
+                                <label htmlFor={gender.toLowerCase()} className='bg-[#ffffff10] px-6 py-2 rounded-2xl border-[1px] hover:bg-[#ffffff20] peer-checked:border-green cursor-pointer transition-all duration-300'>{gender}</label>
+                            </div>
+                        ))}
                     </div>
 
-                    {/* Date of Birth */}
                     <div className='w-full min-w-[40vw] flex items-center py-2 '>
-                        <label className='font-main  flex-nowrap w-40 ' >Date of Birth</label>
-                        <InputBox labelText='' inputType='date' parenCN='font-main' inputName="dob" inputValue={formData.dob} inputChange={handleInputChange} />
+                        <label className='font-main flex-nowrap w-40'>Date of Birth</label>
+                        <InputBox inputType='date' inputName="dob" inputValue={formData.dob} inputChange={handleInputChange} />
                     </div>
 
                     <button className='bg-green text-black w-full py-2 rounded-xl' onClick={handleSubmit}>

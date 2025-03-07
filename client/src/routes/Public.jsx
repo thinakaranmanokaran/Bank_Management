@@ -1,17 +1,22 @@
 import { Routes, Route } from "react-router-dom";
-import { Home, Register, SignIn } from "../pages";
+import { FaceAuthentication, Home, Register, SignIn } from "../pages";
 import PublicLayout from "../layouts/PublicLayout";
+import { useAuth } from "../contexts";
 
 const PublicRoutes = () => {
-  return (
-    <Routes>
-      <Route element={<PublicLayout />} >
-        <Route index element={<Home />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/register" element={<Register />} />
-      </Route>
-    </Routes>
-  );
+
+    const { currentUser } = useAuth();
+
+    return (
+        <Routes>
+            <Route element={<PublicLayout />} >
+                <Route index element={<Home />} />
+                <Route path="/signin" element={<SignIn />} />
+                <Route path="/register" element={<Register />} />
+                <Route path={`/faceauth`} element={<FaceAuthentication />} />
+            </Route>
+        </Routes>
+    );
 };
 
 export default PublicRoutes;

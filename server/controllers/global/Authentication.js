@@ -13,6 +13,7 @@ exports.registerUser = async (req, res) => {
       gender,
       dob,
       role,
+      position,
     } = req.body;
     
     // Attempt to create a new user
@@ -24,6 +25,7 @@ exports.registerUser = async (req, res) => {
       gender,
       dob,
       role,
+      position,
     });
 
     // Send token as response

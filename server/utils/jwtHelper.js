@@ -10,6 +10,7 @@ const sendToken = (user, statusCode, res) => {
     dob: user.dob,
     gender: user.gender,    
     role: user.role,
+    position: user.position,
   };
 
   // Generate the token

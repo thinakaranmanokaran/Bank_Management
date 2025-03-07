@@ -15,6 +15,7 @@ const registerSchema = new mongoose.Schema({
         select: false,
     },
     role: { type: String, default: "user" },
+    position: { type: String, enum: ["Accountant", "Manager", "Other"], required: false },
 
     createdAt: { type: Date, default: Date.now },
 });

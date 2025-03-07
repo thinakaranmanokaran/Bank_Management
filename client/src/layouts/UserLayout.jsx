@@ -1,5 +1,5 @@
 import React from 'react'
-import { UserHeader, UserProfile } from '../components'
+import { UserDialogBox, UserHeader, UserProfile } from '../components'
 import { Outlet } from 'react-router-dom'
 
 const UserLayout = () => {
@@ -9,6 +9,7 @@ const UserLayout = () => {
             {/* <div>UserLayout</div> */}
             <div className='flex py-6 space-x-6 ' >
                 <UserProfile />
+                <UserDialogBox />
                 <Outlet />
             </div>
         </div>
