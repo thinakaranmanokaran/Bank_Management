@@ -8,3 +8,5 @@ export { default as AdminHeader } from './admin/Header'
 export { default as UserHeader } from './user/Header'
 export { default as UserProfile } from './user/Profile'
 export { default as UserDialogBox } from './user/DialogBox'
+
+export { default as EmployeeHeader } from './employee/Header'

@@ -9,6 +9,11 @@ export {default as AdminDashBoard } from './admin/DashBoard';
 export {default as AdminProfile } from './admin/Profile';
 export {default as AdminEmployeeAdd } from './admin/EmployeeAdd';
 
+//Employee
+export { default as EmployeeHome } from './employee/Home'
+export { default as EmployeeLoanApprove } from './employee/Loan'
+export { default as EmployeeDepositApprove } from './employee/Deposit'
+
 //User
 export {default as UserDashBoard } from './user/DashBoard';
 export {default as UserProfile } from './user/Profile';
