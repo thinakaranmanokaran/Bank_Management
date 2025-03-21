@@ -56,6 +56,7 @@ const Register = () => {
     
             if (response.ok && data.success) {
                 alert(`Account created successfully! Your Account Number: ${data.accountno}`);
+                localStorage.setItem('accountToken', data.accountToken);
             } else {
                 alert(data.message || 'Something went wrong!');
             }

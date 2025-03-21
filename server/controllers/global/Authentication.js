@@ -69,3 +69,23 @@ exports.signinUser = async (req, res) => {
   }
 };
 
+exports.getUserNameByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    // Find the user by email
+    const user = await Authentication.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Return the user's name
+    res.status(200).json({ name: user.name });
+  } catch (error) {
+    console.error('Error in getUserNameByEmail:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+

@@ -8,5 +8,8 @@ export { default as AdminHeader } from './admin/Header'
 export { default as UserHeader } from './user/Header'
 export { default as UserProfile } from './user/Profile'
 export { default as UserDialogBox } from './user/DialogBox'
+export { default as UserDashboardCard } from './user/DashboardCard'
+export { default as UserPayCard } from './user/PayCard'
 
 export { default as EmployeeHeader } from './employee/Header'
+export { default as EmployeeNavigation } from './employee/Navigation'

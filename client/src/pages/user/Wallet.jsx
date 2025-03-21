@@ -1,7 +1,13 @@
 import React from 'react'
 import formattedTime from '../../utils/Time'
+import { useAcc, useAuth, useBalance } from '../../contexts'
 
 const Wallet = () => {
+
+    const { currentAcc } = useAcc(); 
+    const { currentUser } = useAuth(); 
+    const { balance, error } = useBalance(); 
+
     return (
         <div>
             <div>
@@ -14,8 +20,8 @@ const Wallet = () => {
                                 <div className='text-dark ' >{formattedTime}</div>
                             </div>
                             <div className='flex-col items-end flex font-jet pb-4 ' >
-                                <div className='text-dark text-6xl p-4  px-5 ' >2000.00</div>
-                                <div className='text-dark w-full text-lg px-4 py-1 bg-white' >12********89</div>
+                                <div className='text-dark text-6xl p-4  px-5 ' >{balance}.00</div>
+                                <div className='text-dark w-full text-lg px-4 py-1 bg-white' >{currentAcc?.accountno || 12304040404040}</div>
                             </div>
                         </div>
                         <div className='bg-white w-96 h-60  rounded-4xl  flex flex-col overflow-hidden justify-between '  >
@@ -24,8 +30,8 @@ const Wallet = () => {
                                 {/* <div className='text-dark ' >{formattedTime}</div> */}
                             </div>
                             <div className='flex-col items-end flex font-jet pb-4 ' >
-                                <div className='text-dark text-6xl p-4  px-5 ' >2200.00</div>
-                                <div className='text-dark w-full text-lg px-4 py-1 bg-green' >12********89</div>
+                                <div className='text-dark text-6xl p-4  px-5 ' >{balance}.00</div>
+                                <div className='text-dark w-full text-lg px-4 py-1 bg-green' >{currentUser?.name}</div>
                             </div>
                         </div>
                     </div>

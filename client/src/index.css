@@ -49,4 +49,23 @@ body{
     overflow-x: hidden;
 }
 
+/* For Webkit browsers (Chrome, Safari, Edge) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+  /* caret-color: var(--color-dark); */
+}
 
+/* For Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+/* 
+button{
+    cursor: pointer;
+} */
+
+.cursor-not-allowed{
+    cursor: not-allowed
+}

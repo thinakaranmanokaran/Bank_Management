@@ -1,4 +1,6 @@
+const sendAccNo = require('../../utils/accountNo');
 const { Account } = require('./../../models/user/Account')
+const mongoose = require('mongoose');
 
 const generateUniqueAccountNo = async () => {
     let isUnique = false;
@@ -15,7 +17,8 @@ const generateUniqueAccountNo = async () => {
     return accountNo;
 };
 
-exports.AccountUser = async (req, res) => {
+// Add Account Details
+exports.addAccountDetails = async (req, res) => {
     try {
         const { email } = req.body;
 
@@ -35,9 +38,76 @@ exports.AccountUser = async (req, res) => {
         });
 
         await newAccount.save();
-        res.status(201).json({ success: true, message: 'Account created successfully!', accountno });
+        sendAccNo(newAccount, 201, res);
+        // res.status(201).json({ success: true, message: 'Account created successfully!', accountno });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+// Get Account Details
+exports.getAccountDetails = async (req, res) => {
+    try {
+        const { accountno } = req.params;
+        const account = await Account.findOne({ accountno });
+
+        if (!account) {
+            return res.status(404).json({ success: false, message: 'Account not found!' });
+        }
+
+        res.status(200).json({ success: true, account });
+        console.log('Received account number:', req.body.accountno);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+// Update Account Balance
+exports.updateAccountDetails = async (req, res) => {
+    try {
+        const { accountno } = req.params;
+        const { balance } = req.body; // ✅ Using balance instead of amount
+
+        // Validate if balance is a number
+        if (isNaN(balance)) {
+            return res.status(400).json({ success: false, message: 'Invalid balance' });
+        }
+
+        const account = await Account.findOne({ accountno });
+
+        if (!account) {
+            return res.status(404).json({ success: false, message: 'Account not found!' });
+        }
+
+        // Update balance directly
+        account.balance = Number(account.balance) + Number(balance);
+        await account.save();
+
+        res.status(200).json({ success: true, message: 'Account updated successfully!', account });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+
+exports.getUserEmailByAccNo = async (req, res) => {
+    try {
+        const { accountno } = req.params;
+
+        // Find the user by email
+        const user = await Account.findOne({ accountno });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return the user's name
+        res.status(200).json({ email: user.email });
+    } catch (error) {
+        console.error('Error in getUserNameByEmail:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
