@@ -1,11 +1,23 @@
 
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { EmployeeDepositApprove, EmployeeHome, EmployeeLoanApprove, EmployeeCibilScore, EmployeeProfile, EmployeeUserProfile, EmployeeUsers, EmployeeUserSearch } from '../pages';
 import EmployeeLayout from '../layouts/EmployeeLayout';
+import { Loader } from '../components';
 
 const EmployeeRoutes = () => {
-    return (
+    const [loading, setLoading] = useState(false);
+    const location = useLocation();
+
+    useEffect(() => {
+        setLoading(true);
+        const timer = setTimeout(() => setLoading(false), 1500); // Adjust time as needed
+        return () => clearTimeout(timer);
+    }, [location]);
+
+    return loading ? (
+        <Loader />
+    ) : (
         <Routes>
             <Route path="/employee" element={<EmployeeLayout />}>
                 <Route index element={<EmployeeHome />} />

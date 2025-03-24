@@ -14,6 +14,7 @@ exports.registerUser = async (req, res) => {
       dob,
       role,
       position,
+      img,
     } = req.body;
 
     // Attempt to create a new user
@@ -26,6 +27,7 @@ exports.registerUser = async (req, res) => {
       dob,
       role,
       position,
+      img,
     });
 
     // Send token as response
@@ -50,12 +52,36 @@ exports.getAuthData = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.status(200).json(user); 
+    res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const { email } = req.params;
+    const { img } = req.body;
+
+    if (!img) {
+      return res.status(400).json({ message: 'Image is required' });
+    }
+
+    const updateIMG = await Authentication.findOneAndUpdate(
+      { email },
+      { $set: { img } }, // Use $set to specifically update the img field
+      { new: true, runValidators: true }
+    );
+
+    if (!updateIMG) {
+      return res.status(404).json({ message: 'image not found' });
+    }
+
+    res.status(200).json({ message: 'image updated successfully', updateIMG });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 // Register a new user
 
 // Check if user exists (Login)

@@ -1,8 +1,17 @@
 import React from 'react'
 import { EmployeeHeader, EmployeeNavigation } from '../components'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts';
 
 const EmployeeLayout = () => {
+
+    const { currentUser } = useAuth();
+    const navigate = useNavigate();
+
+    if (!currentUser || currentUser.role !== "employee") {
+        navigate("/");
+    }
+
     return (
         <div className='bg-black w-screen min-h-screen text-white p-6 ' >
             <EmployeeHeader />

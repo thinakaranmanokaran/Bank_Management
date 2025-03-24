@@ -30,7 +30,7 @@ const LandingPage = () => {
                     <div className=' w-full max-w-72 flex justify-end' >
                         {
                             currentUser ?
-                                <Link to="/user" className=' flex justify-between items-center border-2 border-green rounded-full hover:pr-4 group transition-all duration-300 ' >
+                                <Link to={`${currentUser?.role === "user" ? "/user/dashboard" : currentUser?.role === "employee" ? "/employee/profile" : "/admin/employeeadd" }`} className=' flex justify-between items-center border-2 border-green rounded-full hover:pr-4 group transition-all duration-300 ' >
                                     <div className="text-xl group-hover:mr-2 font-main px-8 py-3 rounded-3xl bg-green text-black transition-all duration-300  ">{currentUser.name}</div>
                                     <span className=' text-green text-2xl absolute transition-all duration-300 group-hover:static ' > 
                                         <HiArrowUpRight />

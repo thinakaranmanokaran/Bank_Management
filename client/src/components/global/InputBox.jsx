@@ -27,7 +27,7 @@ const InputBox = ({
     };
 
     return (
-        <label className={`w-full flex flex-col relative ${parenCN}`}>
+        <label className={`w-full flex flex-col relative font-sfreg ${parenCN}`}>
             <input
                 type={showPass ? 'text' : inputType}
                 name={inputName}

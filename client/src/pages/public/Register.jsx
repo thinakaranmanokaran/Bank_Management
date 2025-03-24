@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Register = () => {
-    const navigate = useNavigate(); // Initialize navigate function
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -13,19 +13,20 @@ const Register = () => {
         password: '',
         gender: '',
         dob: '',
+        img: '',
     });
-
-    const generateAccountNo = () => {
-        return Math.floor(100000000000 + Math.random() * 900000000000).toString();
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const genderImg = formData.gender === 'Male' ? '2' : formData.gender === 'Female' ? '12' : 'default';
+        const updatedFormData = { ...formData, img: genderImg };
+
         try {
             const response = await fetch(`${API_URL}/api/users/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(updatedFormData),
             });
 
             const text = await response.text();
@@ -35,7 +36,7 @@ const Register = () => {
                 alert('User registered successfully!');
                 localStorage.setItem('token', data.token);
                 handleAccInfo(formData.email);
-                setFormData({ name: '', email: '', phone: '', password: '', gender: '', dob: '' });
+                setFormData({ name: '', email: '', phone: '', password: '', gender: '', dob: '', img: '' });
                 navigate('/');
             } else {
                 alert(data.message || 'Something went wrong!');
@@ -68,7 +69,6 @@ const Register = () => {
         }
     };
 
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -87,7 +87,7 @@ const Register = () => {
                         <InputBox labelText='E-mail' inputType='email' inputName="email" inputValue={formData.email} inputChange={handleInputChange} />
                     </div>
                     <div className='w-full min-w-[40vw]'>
-                        <InputBox labelText='Password' inputType='password' inputName="password" inputValue={formData.password} inputChange={handleInputChange} />
+                        <InputBox labelText='Password' inputType='password' inputName="password" inputValue={formData.password} inputChange={handleInputChange} showPassword='yes' />
                     </div>
                     <div className='w-full min-w-[40vw]'>
                         <InputBox labelText='Phone' inputType='number' inputName="phone" inputValue={formData.phone} inputChange={handleInputChange} />

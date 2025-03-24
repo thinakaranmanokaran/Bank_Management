@@ -4,7 +4,7 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 
 const { registerRequest, signinRequest } = require('../middlewares/global/Authentication');
-const { registerUser, signinUser, getUserNameByEmail, getAuthData } = require('../controllers/global/Authentication');
+const { registerUser, signinUser, getUserNameByEmail, getAuthData, updateUserProfile } = require('../controllers/global/Authentication');
 
 const { AccountRequest } = require('../middlewares/user/Account');
 const { addAccountDetails, getAccountDetails, updateAccountDetails, getUserEmailByAccNo, setAccountDetails, getAccountDetailsByEmail } = require('../controllers/user/Account');
@@ -22,6 +22,7 @@ const { NotificationRequest } = require('../middlewares/user/Notification');
 // Registration route
 userRouter.post('/register', registerRequest, registerUser);
 userRouter.get('/register/data/:email', getAuthData);
+userRouter.put('/register/update/:email', updateUserProfile);
 userRouter.post('/signin', signinRequest, signinUser);
 
 // Face Authentication routes (Added multer middleware)

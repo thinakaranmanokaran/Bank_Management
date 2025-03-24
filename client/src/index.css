@@ -1,59 +1,59 @@
 @import "tailwindcss";
 
 @font-face {
-    font-family: lato;
-    src: url(./assets/fonts/lato/Lato-Bold.ttf);
+  font-family: lato;
+  src: url(./assets/fonts/lato/Lato-Bold.ttf);
 }
 
 @font-face {
-    font-family: main;
-    src: url(./assets/fonts/Urbanist-VariableFont_wght.ttf);
+  font-family: main;
+  src: url(./assets/fonts/Urbanist-VariableFont_wght.ttf);
 }
 
 @font-face {
-    font-family: halo;
-    src: url(./assets/fonts/halogen/Halogen-Medium.otf);
+  font-family: halo;
+  src: url(./assets/fonts/halogen/Halogen-Medium.otf);
 }
 
 @font-face {
-    font-family: sfpro;
-    src: url(./assets/fonts/sanfrancisco/SF-Pro-Rounded-Medium.otf);
+  font-family: sfpro;
+  src: url(./assets/fonts/sanfrancisco/SF-Pro-Rounded-Medium.otf);
 }
 
 @font-face {
-    font-family: gotham;
-    src: url(./assets/fonts/gotham/Gotham-Medium.otf);
+  font-family: gotham;
+  src: url(./assets/fonts/gotham/Gotham-Medium.otf);
 }
 
 @font-face {
-    font-family: jet;
-    src: url(./assets/fonts/space/SpaceGrotesk-Regular.ttf);
+  font-family: jet;
+  src: url(./assets/fonts/space/SpaceGrotesk-Regular.ttf);
 }
 
 @font-face {
-    font-family: sfreg;
-    src: url(./assets/fonts/sanfrancisco/SF-Pro-Display-Regular.otf);
+  font-family: sfreg;
+  src: url(./assets/fonts/sanfrancisco/SF-Pro-Display-Regular.otf);
 }
 
-@theme{
-    --font-lato: "lato", "sans-serif"; 
-    --font-main: "main", "sans-serif"; 
-    --font-halo: "halo", "sans-serif"; 
-    --font-sfpro: "sfpro", "sans-serif"; 
-    --font-sfreg: "sfreg", "sans-serif"; 
-    --font-gotham: "gotham", "sans-serif"; 
-    --font-jet: "jet", "sans-serif"; 
+@theme {
+  --font-lato: "lato", "sans-serif";
+  --font-main: "main", "sans-serif";
+  --font-halo: "halo", "sans-serif";
+  --font-sfpro: "sfpro", "sans-serif";
+  --font-sfreg: "sfreg", "sans-serif";
+  --font-gotham: "gotham", "sans-serif";
+  --font-jet: "jet", "sans-serif";
 }
 
-@theme{
-    --color-dark: #171717; 
-    --color-black: #080808; 
-    --color-green: #b8f011; 
-    --color-light: #858585; 
+@theme {
+  --color-dark: #171717;
+  --color-black: #080808;
+  --color-green: #b8f011;
+  --color-light: #858585;
 }
 
-body{
-    overflow-x: hidden;
+body {
+  overflow-x: hidden;
 }
 
 /* For Webkit browsers (Chrome, Safari, Edge) */
@@ -73,6 +73,19 @@ button{
     cursor: pointer;
 } */
 
-.cursor-not-allowed{
-    cursor: not-allowed
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(42px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(42px) rotate(-360deg);
+  }
+}
+
+.animate-orbit {
+  animation: orbit 1s infinite;
 }

@@ -3,6 +3,8 @@ export { default as Section } from './global/Section'
 export { default as InputBox } from './global/InputBox'
 export { default as Selection } from './global/Selection'
 export { default as InputLine } from './global/InputLine'
+export { default as Loader } from './global/Loader'
+export { default as LoadingButton } from './global/LoadingButton'
 
 export { default as AdminHeader } from './admin/Header'
 

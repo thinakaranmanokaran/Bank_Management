@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { toWords } from 'number-to-words';
 import axios from 'axios';
 import { useAcc } from '../../contexts';
+import { LoadingButton } from '../../components';
 
 const Deposit = () => {
     const API_URL = import.meta.env.VITE_API_URL;
@@ -81,6 +82,7 @@ const Deposit = () => {
                 >
                     Proceed
                 </button>
+                {/* <LoadingButton /> */}
             </div>
         </div>
     );
