@@ -55,9 +55,17 @@ const MobPay = () => {
             amount,
         };
 
+        const notificationData = {
+            accountno: accNumber,
+            name: currentUser?.name,
+            type: "transaction",
+            message: `${name} sent ₹${amount} to your account `,
+        }
+
         try {
             // Step 1: Create Transaction
             await axios.post(`${API_URL}/api/users/transaction`, transactionData);
+
 
             // Step 2: Deduct Amount from Sender's Balance
             await axios.put(`${API_URL}/api/users/balance/${currentAcc?.accountno}`, {
@@ -68,6 +76,8 @@ const MobPay = () => {
             await axios.put(`${API_URL}/api/users/balance/${accNumber}`, {
                 balance: Number(amount), // Add to receiver
             });
+
+            await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
 
             setSuccess("Transaction successful!");
             setError('');
@@ -92,14 +102,14 @@ const MobPay = () => {
                             <div>Acc.No:</div>
                             <div>{currentAcc?.accountno}</div>
                         </div>
-                        <div className='flex font-sfpro space-x-2 text-xl'>
+                        {/* <div className='flex font-sfpro space-x-2 text-xl'>
                             <div>Name:</div>
                             <div>{currentUser?.name}</div>
                         </div>
                         <div className='flex font-sfpro space-x-2 text-xl'>
                             <div>Email:</div>
                             <div>{currentUser?.email}</div>
-                        </div>
+                        </div> */}
                         <div className='flex font-sfpro space-x-2 text-xl'>
                             <div>Current Bal:</div>
                             <div>{balance}</div>

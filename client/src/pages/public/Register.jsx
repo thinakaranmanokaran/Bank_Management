@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { InputBox } from '../../components';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Register = () => {
+    const navigate = useNavigate(); // Initialize navigate function
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -35,6 +36,7 @@ const Register = () => {
                 localStorage.setItem('token', data.token);
                 handleAccInfo(formData.email);
                 setFormData({ name: '', email: '', phone: '', password: '', gender: '', dob: '' });
+                navigate('/');
             } else {
                 alert(data.message || 'Something went wrong!');
             }
@@ -51,9 +53,9 @@ const Register = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
             });
-    
+
             const data = await response.json();
-    
+
             if (response.ok && data.success) {
                 alert(`Account created successfully! Your Account Number: ${data.accountno}`);
                 localStorage.setItem('accountToken', data.accountToken);
@@ -65,7 +67,7 @@ const Register = () => {
             alert('An error occurred while creating the account.');
         }
     };
-    
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

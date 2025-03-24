@@ -8,8 +8,9 @@ import MobPay from './user/mobpay.png'
 import Loan from './user/loan.png'
 import PrintHistory from './user/printhistory.png'
 
+import Star from './noun-ai-stars-6056249.svg'
 
 export default{
     Security, Wallet, Profile, QRCode, 
-    Deposit, MobPay, Loan, PrintHistory
+    Deposit, MobPay, Loan, PrintHistory, Star,
 }

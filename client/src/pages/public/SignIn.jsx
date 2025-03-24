@@ -25,13 +25,14 @@ const SignIn = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
-    
+
             const text = await response.text(); // Read response as text
             const data = text ? JSON.parse(text) : {}; // Parse only if not empty
-    
+
             if (response.ok && data.success) {
                 alert('User signed in successfully!');
                 localStorage.setItem('token', data.token);
+                handleAccInfo(formData.email);
                 setFormData({ email: '', password: '' });
                 navigate("/");
             } else {
@@ -42,7 +43,29 @@ const SignIn = () => {
             alert('An error occurred while signing in.');
         }
     };
-    
+
+    const handleAccInfo = async (email) => {
+        try {
+            const response = await fetch(`${API_URL}/api/users/balance/set`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                alert(`Account created successfully! Your Account Number: ${data.accountno}`);
+                localStorage.setItem('accountToken', data.accountToken);
+            } else {
+                alert(data.message || 'Something went wrong!');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while creating the account.');
+        }
+    };
+
 
     return (
         <div  >

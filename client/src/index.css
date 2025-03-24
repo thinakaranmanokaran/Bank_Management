@@ -30,11 +30,17 @@
     src: url(./assets/fonts/space/SpaceGrotesk-Regular.ttf);
 }
 
+@font-face {
+    font-family: sfreg;
+    src: url(./assets/fonts/sanfrancisco/SF-Pro-Display-Regular.otf);
+}
+
 @theme{
     --font-lato: "lato", "sans-serif"; 
     --font-main: "main", "sans-serif"; 
     --font-halo: "halo", "sans-serif"; 
     --font-sfpro: "sfpro", "sans-serif"; 
+    --font-sfreg: "sfreg", "sans-serif"; 
     --font-gotham: "gotham", "sans-serif"; 
     --font-jet: "jet", "sans-serif"; 
 }
@@ -43,6 +49,7 @@
     --color-dark: #171717; 
     --color-black: #080808; 
     --color-green: #b8f011; 
+    --color-light: #858585; 
 }
 
 body{

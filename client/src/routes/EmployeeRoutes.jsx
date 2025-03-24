@@ -11,9 +11,9 @@ const EmployeeRoutes = () => {
                 <Route index element={<EmployeeHome />} />
                 <Route path="deposit" element={<EmployeeDepositApprove />} />
                 <Route path="loan" element={<EmployeeLoanApprove />} />
-                <Route path="cibil-score" element={<EmployeeCibilScore />} />
+                <Route path="cibil-score/d/:accountno" element={<EmployeeCibilScore />} />
                 <Route path="profile" element={<EmployeeProfile />} />
-                <Route path="user-profile" element={<EmployeeUserProfile />} />
+                <Route path="user-profile/d/:accountno" element={<EmployeeUserProfile />} />
                 <Route path="users" element={<EmployeeUsers />} />
                 <Route path="user-search" element={<EmployeeUserSearch />} />
             </Route>

@@ -46,11 +46,47 @@ exports.addAccountDetails = async (req, res) => {
     }
 };
 
+exports.setAccountDetails = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        // Query the 'users' collection
+        const user = await Account.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User email not found' });
+        }
+
+        // return res.status(200).json({ message: 'Success', user });
+        sendAccNo(user, 200, res);
+    } catch (error) {
+        console.error('Error in addUser:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
 // Get Account Details
 exports.getAccountDetails = async (req, res) => {
     try {
         const { accountno } = req.params;
         const account = await Account.findOne({ accountno });
+
+        if (!account) {
+            return res.status(404).json({ success: false, message: 'Account not found!' });
+        }
+
+        res.status(200).json({ success: true, account });
+        console.log('Received account number:', req.body.accountno);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+// Get Account Details
+exports.getAccountDetailsByEmail = async (req, res) => {
+    try {
+        const { email } = req.params;
+        const account = await Account.findOne({ email });
 
         if (!account) {
             return res.status(404).json({ success: false, message: 'Account not found!' });

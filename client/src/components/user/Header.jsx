@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { HiArrowLeft, HiArrowRight } from "react-icons/hi2";
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -7,8 +7,18 @@ import { RiSettings4Fill } from "react-icons/ri";
 import { RiCloseLargeLine } from "react-icons/ri";
 import { LiaPowerOffSolid } from "react-icons/lia";
 import formattedTime from '../../utils/Time';
+import axios from 'axios';
+import { useAcc } from '../../contexts';
 
 const Header = () => {
+
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    const [notifcationData, setNotificationData] = useState([]);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
+    const { currentAcc } = useAcc();
+
 
     const [options, showOptions] = useState(false);
     const [notifications, showNotifications] = useState(false);
@@ -18,8 +28,57 @@ const Header = () => {
 
     function LogOut() {
         localStorage.removeItem("token")
+        localStorage.removeItem("accountToken")
         navigate('/signin');
     }
+
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/api/users/notification/${currentAcc?.accountno}`);
+                setNotificationData(response.data);
+            } catch (err) {
+                setError(err.response?.data?.message || 'Error fetching deposits');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (currentAcc?.accountno) {
+            fetchNotifications();
+        }
+    }, [API_URL, currentAcc?.accountno]);
+
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    // if (error) {
+    //     return <div className='text-red-500' >Error while Data fetch</div>;
+    // }
+
+    const handleClear = async (id) => {
+        try {
+            await axios.delete(`${API_URL}/api/users/notification/${id}`);
+            alert('Notification cleared successfully!');
+            setNotificationData((prevData) => prevData.filter((item) => item._id !== id)); // Update state after deletion
+        } catch (err) {
+            setError(err.response?.data?.message || 'Error deleting notification');
+        }
+    };
+
+    // clear Notification
+    const handleClearAll = async () => {
+        try {
+            await axios.delete(`${API_URL}/api/users/notifications/${currentAcc?.accountno}`);
+            alert('All notifications cleared successfully!');
+            setNotificationData([]); // Clear all notifications in state
+        } catch (err) {
+            setError(err.response?.data?.message || 'Error deleting all notifications');
+        }
+    };
 
     return (
         <div className='bg-[#ffffff10] p-4 rounded-full flex justify-between  ' >
@@ -65,6 +124,30 @@ const Header = () => {
                         <div className='font-sfpro  text-2xl ' >Notifications</div>
                         <button onClick={() => showNotifications(false)} className='text-base p-2 rounded-full hover:bg-[#ffffff20] transition-all duration-300 ' ><RiCloseLargeLine /></button>
                     </div>
+                    <div className='mt-6 ' >
+                        {
+                            notifcationData.map((Data) => (
+                                <div key={Data._id} className="bg-white mt-4 text-dark relative rounded-2xl p-4" >
+                                    <div className='flex  ' >
+                                        {Data?.type === "transaction" ? (<div className="text-2xl font-gotham bg-dark text-white  rounded-full min-w-12 h-12 flex justify-center items-center  " >{Data?.name.charAt(0)}</div>) : ("")}
+                                        <div className='ml-2 text-base font-sfreg  ' >
+                                            <div>{Data.message}</div>
+                                            {/* <div>{Data.accountno}</div>
+                                            <div>{currentAcc?.accountno}</div> */}
+                                            <button className='absolute bottom-2 right-2 bg-green text-dark px-3 py-1 text-xs rounded-full font-sfreg cursor-pointer ' onClick={() => handleClear(Data._id)} >clear</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
+                    {
+                        notifcationData.length === 0 ?
+                            <div className='font-sfreg text-lg ' >No notifications</div> : 
+                            <div className="flex justify-end mt-2" >
+                                <button className="bg-[#ffffff20] backdrop-blur-2xl font-sfreg text-white px-3 py-1 text-sm rounded-full cursor-pointer" onClick={handleClearAll} >clear all</button>
+                            </div>
+                    }
                 </div>
             </div>
         </div>

@@ -5,8 +5,8 @@ const EmployeeNavigation = [
     { title: "Loan Applications", link: "/employee/loan" },
     { title: "CIBIL Score", link: "/employee/cibil-score" },
     { title: "User Profile", link: "/employee/user-profile" },
-    { title: "Users", link: "/employee/users" },
-    { title: "User Search", link: "/employee/user-search" },
+    // { title: "Users", link: "/employee/users" },
+    // { title: "User Search", link: "/employee/user-search" },
 ];
 
 export default EmployeeNavigation;

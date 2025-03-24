@@ -15,7 +15,7 @@ exports.registerUser = async (req, res) => {
       role,
       position,
     } = req.body;
-    
+
     // Attempt to create a new user
     const user = await Authentication.create({
       name,
@@ -39,6 +39,20 @@ exports.registerUser = async (req, res) => {
     // Handle other errors
     console.error('Error in registerUser:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
+exports.getAuthData = async (req, res) => {
+  const { email } = req.params;
+  try {
+    const user = await Authentication.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user); 
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
