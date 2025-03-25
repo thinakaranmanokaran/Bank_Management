@@ -12,13 +12,14 @@ const UserProfile = () => {
         return <div>You Need a Account No</div>
     }
 
-    const { balance } = useBalance();
+    // const { balance } = useBalance(); 
     const API_URL = import.meta.env.VITE_API_URL;
 
     const [account, setAccount] = useState({});
     const [authData, setAuthData] = useState({});
     const [transactionData, setTransactionData] = useState({});
     const [loanData, setLoanData] = useState({});
+    const [balance, setBalance ] =useState({});
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
 
@@ -28,6 +29,12 @@ const UserProfile = () => {
                 // First API call to get account data
                 const response = await axios.get(`${API_URL}/api/users/email/${accountno}`);
                 setAccount(response.data);
+
+                // First API call to get account data
+                const balanceData = await axios.get(`${API_URL}/api/users/balance/${accountno}`);
+                setBalance(balanceData.data);
+                console.log('Balance Data:', balanceData.data);
+
 
                 // Second API call to get auth data using the email from the first response
                 const authdata = await axios.get(`${API_URL}/api/users/register/data/${response.data.email}`);
@@ -103,7 +110,7 @@ const UserProfile = () => {
                         </div>
                         <div className='bg-dark h-fit text-light p-10 text-lg font-sfreg space-y-4 rounded-4xl ' >
                             <div className='mr-20' >Bank Balance: </div>
-                            <div className='text-end font-jet text-4xl text-green ' >{balance}</div>
+                            <div className='text-end font-jet text-4xl text-green ' >{balance?.account?.balance}</div>
                         </div>
                     </div>
                     <div className="text-2xl font-gotham mb-4 ">Loan Application</div>

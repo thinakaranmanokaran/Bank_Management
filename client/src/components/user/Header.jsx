@@ -29,7 +29,7 @@ const Header = () => {
     function LogOut() {
         localStorage.removeItem("token")
         localStorage.removeItem("accountToken")
-        navigate('/signin');
+        navigate('/');
     }
 
 
@@ -84,7 +84,7 @@ const Header = () => {
         <div className='bg-[#ffffff10] p-4 rounded-full flex justify-between  ' >
             <div className='flex  items-center space-x-8 ' >
                 <div>
-                    <Link to="/" className='flex gap-x-2 items-center bg-green  w-fit  px-4 py-3 text-xl  font-main rounded-full text-dark ' ><HiArrowLeft />Back to Home</Link>
+                    <Link to="/user/dashboard" className='flex gap-x-2 items-center bg-green  w-fit  px-4 py-3 text-xl  font-main rounded-full text-dark ' ><HiArrowLeft />Back to Home</Link>
                 </div>
                 <div className=' flex space-x-4 items-center text-sm  font-halo' >
                     {

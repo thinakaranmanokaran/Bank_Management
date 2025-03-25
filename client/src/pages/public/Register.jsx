@@ -93,11 +93,11 @@ const Register = () => {
                         <InputBox labelText='Phone' inputType='number' inputName="phone" inputValue={formData.phone} inputChange={handleInputChange} />
                     </div>
 
-                    <div className='flex space-x-4 mt-2 mb-5 justify-start w-full'>
+                    <div className='flex space-x-4 mt-2 mb-5 justify-start w-full font-sfreg  '>
                         {['Male', 'Female', 'Other'].map((gender) => (
                             <div key={gender}>
                                 <input type="radio" name="gender" id={gender.toLowerCase()} value={gender} checked={formData.gender === gender} onChange={handleInputChange} className='hidden peer' />
-                                <label htmlFor={gender.toLowerCase()} className='bg-[#ffffff10] px-6 py-2 rounded-2xl border-[1px] hover:bg-[#ffffff20] peer-checked:border-green cursor-pointer transition-all duration-300'>{gender}</label>
+                                <label htmlFor={gender.toLowerCase()} className='bg-[#ffffff10] px-6 py-2 rounded-2xl border-[1px]  peer-checked:text-black peer-checked:bg-green cursor-pointer transition-all duration-300'>{gender}</label>
                             </div>
                         ))}
                     </div>

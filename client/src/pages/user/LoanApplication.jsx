@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { InputLine } from '../../components';
 import { useAcc } from '../../contexts';
+import { useNavigate } from 'react-router-dom';
 
 const LoanApplication = () => {
     const [formData, setFormData] = useState({});
     const { currentAcc } = useAcc();
     const API_URL = import.meta.env.VITE_API_URL;
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -33,6 +36,7 @@ const LoanApplication = () => {
             const data = await response.json();
             if (response.ok) {
                 alert('Loan application submitted successfully!');
+                navigate('/user/dashboard')
             } else {
                 alert(`Error: ${data.message}`);
             }

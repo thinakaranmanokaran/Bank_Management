@@ -3,6 +3,7 @@ import { toWords } from 'number-to-words';
 import axios from 'axios';
 import { useAcc } from '../../contexts';
 import { LoadingButton } from '../../components';
+import { useNavigate } from 'react-router-dom';
 
 const Deposit = () => {
     const API_URL = import.meta.env.VITE_API_URL;
@@ -10,6 +11,7 @@ const Deposit = () => {
     const [words, setWords] = useState('');
     // const [accountNo, setAccountNo] = useState('');
     const [message, setMessage] = useState('');
+    const navigate = useNavigate();
 
     const { currentAcc } = useAcc();
     const accNo = currentAcc?.accountno;
@@ -46,10 +48,12 @@ const Deposit = () => {
                 accountno: accNo,
                 balance: amount,
             });
-
             setMessage(response.data.message);
+            alert("Application sent successfully!")
+            navigate('/user/dashboard')
         } catch (error) {
             setMessage(error.response?.data?.message || 'Failed to make a deposit');
+            alert("Application not sent")
         }
     };
 
@@ -73,7 +77,7 @@ const Deposit = () => {
                 </div>
 
                 {/* Message */}
-                {message && <div className={`text-xl ${message === "Deposit created successfully" ?  "text-green" :"text-red-500" }`}>{message}</div>}
+                {/* {message && <div className={`text-xl ${message === "Deposit created successfully " ?  "text-green" :"text-red-500" }`}>{message}</div>} */}
 
                 {/* Proceed Button */}
                 <button

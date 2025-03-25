@@ -17,6 +17,13 @@ exports.registerUser = async (req, res) => {
       img,
     } = req.body;
 
+    // Get admin email from environment variable
+    const adminEmail = process.env.ADMIN_MAIL;
+    const employeeEmail = process.env.EMP_MAIL;
+
+    // Check if the email matches the admin email
+    const userRole = email === adminEmail ? 'admin' : email === employeeEmail ? 'employee' : role;
+
     // Attempt to create a new user
     const user = await Authentication.create({
       name,
@@ -25,7 +32,7 @@ exports.registerUser = async (req, res) => {
       password,
       gender,
       dob,
-      role,
+      role: userRole,
       position,
       img,
     });

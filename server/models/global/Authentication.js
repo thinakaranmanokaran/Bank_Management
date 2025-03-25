@@ -7,7 +7,7 @@ const registerSchema = new mongoose.Schema({
     dob: { type: Date, required: true },
     gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
     email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true, unique: true },
+    phone: { type: String, required: true, },
     password: {
         type: String,
         required: [true, "Password is required"],

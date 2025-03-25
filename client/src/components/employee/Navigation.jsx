@@ -4,7 +4,7 @@ import EmployeeNavigation from '../../database/empolyee/Navigation';
 
 const Navigation = () => {
     return (
-        <div className='bg-dark py-6 rounded-4xl min-w-60 flex flex-col '>
+        <div className='bg-dark py-6 rounded-4xl min-w-66 flex flex-col '>
             {
                 EmployeeNavigation.map((Data, index) => (
                     <NavLink

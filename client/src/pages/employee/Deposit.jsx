@@ -22,8 +22,15 @@ const Deposit = () => {
         fetchDeposits();
     }, [API_URL]);
 
-    const handleApprove = async (accountno) => {
+    const handleApprove = async (accountno, amount) => {
         if (!window.confirm(`Are you sure you want to approve the deposit for Account No: ${accountno}?`)) return;
+
+        const notificationData = {
+            accountno: accountno,
+            // name: currentUser?.name,
+            type: "deposit",
+            message: `₹${amount} added to your account successfully!`,
+        }
 
         try {
             const response = await axios.put(`${API_URL}/api/users/balance/${accountno}`, {
@@ -33,6 +40,7 @@ const Deposit = () => {
             alert(response.data.message);
             handleDelete(accountno)
             // Optionally refresh deposits
+            await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
             setDeposits(prev => prev.filter(deposit => deposit.accountno !== accountno));
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to approve deposit');
@@ -48,11 +56,6 @@ const Deposit = () => {
         } catch (err) {
             setError(err.response?.data?.message || 'Error deleting deposit');
         }
-    };
-
-    const handleDeny = (id) => {
-        alert(`Denied deposit for ID: ${id}`);
-        // Implement API call to deny deposit
     };
 
     return (
@@ -77,13 +80,13 @@ const Deposit = () => {
                                 <div className="text-5xl text-end font-bold">₹ {deposit.balance}</div>
                                 <div className="flex w-full space-x-2 mt-4">
                                     <button
-                                        onClick={() => handleDeny(deposit._id)}
+                                        onClick={() => handleDelete(deposit.accountno)}
                                         className="bg-dark text-white w-full py-2 rounded-full text-lg font-main cursor-pointer"
                                     >
                                         Deny
                                     </button>
                                     <button
-                                        onClick={() => handleApprove(deposit.accountno)}
+                                        onClick={() => handleApprove(deposit.accountno , deposit.balance)}
                                         className="bg-green w-full py-2 rounded-full text-lg font-main cursor-pointer"
                                     >
                                         Approve

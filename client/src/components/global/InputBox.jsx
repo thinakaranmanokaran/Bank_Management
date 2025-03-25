@@ -8,7 +8,7 @@ const InputBox = ({
     placeHolder,
     inputName,
     inputValue,
-    labelText = 'Name',
+    labelText = '',
     required = true,
     requiredText = '',
     showPassword = 'no',

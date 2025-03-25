@@ -257,7 +257,7 @@ const CibilScore = () => {
                             {calculateScore() >= 700 && calculateScore() < 800 && <div>This application looks good; a few checks are recommended.</div>}
                             {calculateScore() >= 800 && <div>The CIBIL score is excellent; this application is highly recommended for approval.</div>}
                         </div>
-                        <div>{loanData?.loanamount}, {balance}</div>
+                        {/* <div>{loanData?.loanamount}, {balance}</div> */}
                     </div>
                 </div>
             </div>

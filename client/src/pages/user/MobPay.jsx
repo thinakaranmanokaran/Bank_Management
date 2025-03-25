@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAcc, useAuth, useBalance } from '../../contexts';
 import axios from 'axios';
 import images from '../../assets/images';
+import { useNavigate } from 'react-router-dom';
 
 const MobPay = () => {
     const API_URL = import.meta.env.VITE_API_URL;
@@ -16,6 +17,8 @@ const MobPay = () => {
     const [name, setName] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+
+    const navigate = useNavigate();
 
     const handleAccChange = (e) => {
         const input = e.target.value;
@@ -80,9 +83,13 @@ const MobPay = () => {
             await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
 
             setSuccess("Transaction successful!");
+            alert("Money sent successfully!")
+            navigate('/user/dashboard')
             setError('');
         } catch (err) {
             setError(err.response?.data?.message || 'Transaction failed');
+            alert("Money not sent ")
+            // alert(error)
         }
     };
 
