@@ -29,6 +29,7 @@ const Header = () => {
     function LogOut() {
         localStorage.removeItem("token")
         localStorage.removeItem("accountToken")
+        localStorage.removeItem("faceToken")
         navigate('/');
     }
 

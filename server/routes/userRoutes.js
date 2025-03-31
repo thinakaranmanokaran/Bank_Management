@@ -9,7 +9,7 @@ const { registerUser, signinUser, getUserNameByEmail, getAuthData, updateUserPro
 const { AccountRequest } = require('../middlewares/user/Account');
 const { addAccountDetails, getAccountDetails, updateAccountDetails, getUserEmailByAccNo, setAccountDetails, getAccountDetailsByEmail } = require('../controllers/user/Account');
 
-const { verifyFace, registerFace } = require('../controllers/global/FaceAuth');
+const { verifyFace, registerFace, storeFace } = require('../controllers/global/FaceAuth');
 const { userDeposit } = require('../controllers/user/Deposit');
 const { DepositRequest } = require('../middlewares/user/Deposit');
 const { validateTransaction } = require('../middlewares/user/Transactions');
@@ -27,6 +27,7 @@ userRouter.post('/signin', signinRequest, signinUser);
 
 // Face Authentication routes (Added multer middleware)
 userRouter.post('/register-face', upload.single('image'), registerFace);
+userRouter.post('/store-face', upload.single('image'), storeFace);
 userRouter.post('/verify-face', upload.single('image'), verifyFace);
 
 userRouter.post('/balance', addAccountDetails );

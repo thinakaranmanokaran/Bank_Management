@@ -1,19 +1,26 @@
 const fs = require('fs');
 const faceapi = require('face-api.js');
 const canvas = require('canvas');
+// const path = require('path');
+const mime = require('mime-types');
+const { mkdir, rename } = require('fs').promises;
 
-const { Canvas, Image, loadImage, ImageData  } = canvas; // Import canvas
+
+const { Canvas, Image, loadImage, ImageData } = canvas; // Import canvas
 const { FaceAuth } = require('./../../models/global/FaceAuth');
 const path = require('path');
+const sendFaceToken = require('../../utils/faceToken');
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
 // Load FaceAPI models (ensure this runs before face detection)
 const MODEL_URL = path.join(__dirname, './../../models/global/facemodels/');
 
 async function loadModels() {
-    await faceapi.nets.ssdMobilenetv1.loadFromDisk(MODEL_URL);
+    await faceapi.nets.tinyFaceDetector.loadFromDisk(MODEL_URL);
     await faceapi.nets.faceLandmark68Net.loadFromDisk(MODEL_URL);
     await faceapi.nets.faceRecognitionNet.loadFromDisk(MODEL_URL);
+    console.log("Models Loaded");
+
 }
 loadModels();
 
@@ -21,7 +28,7 @@ async function processFace(imageBuffer) {
     try {
         // Convert image buffer to an Image object
         const img = await canvas.loadImage(imageBuffer);
-        
+
         // Create a canvas from the image
         const inputCanvas = canvas.createCanvas(img.width, img.height);
         const ctx = inputCanvas.getContext('2d');
@@ -60,6 +67,44 @@ exports.registerFace = async (req, res) => {
         console.log("Face Data Stored in Database");
 
         res.status(200).json({ message: "Face registered successfully!" });
+    } catch (error) {
+        console.error("Face Registration Error:", error);
+        res.status(500).json({ error: `Face registration failed: ${error.message}` });
+    }
+};
+
+exports.storeFace = async (req, res) => {
+    try {
+        console.log("Incoming Face Registration Request:", req.body, req.file);
+
+        if (!req.file || !req.body.email) {
+            return res.status(400).json({ error: "Email and image are required." });
+        }
+
+        const { email } = req.body;
+        const extension = mime.extension(req.file.mimetype) || 'jpg';
+        const fileName = `${email}.${extension}`;
+        const uploadPath = path.join(__dirname, '../../uploads/faces', fileName);
+
+        // Ensure uploads directory exists
+        await mkdir(path.dirname(uploadPath), { recursive: true });
+
+        // Move file to the uploads directory
+        await rename(req.file.path, uploadPath);
+
+        // Generate dummy face data (In production, replace this with actual face embeddings)
+        const faceData = Array(128).fill(Math.random()); // Example 128-d vector
+
+        // Store email and face data in the database
+        await FaceAuth.findOneAndUpdate(
+            { email },
+            { email, faceData },
+            { upsert: true, new: true }
+        );
+
+        // Send the Face Token using the sendFaceToken utility
+        sendFaceToken({ email }, 200, res);
+        console.log(`Face registered successfully for ${email}!`);
     } catch (error) {
         console.error("Face Registration Error:", error);
         res.status(500).json({ error: `Face registration failed: ${error.message}` });
