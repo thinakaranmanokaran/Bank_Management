@@ -3,9 +3,9 @@ const Transaction = require('../../models/user/Transactions');
 
 // Middleware to validate transaction data
 const validateTransaction = async (req, res, next) => {
-    const { senderaccountno, sendername, senderemail, recieveraccountno, recievername, recieveremail, amount } = req.body;
+    const { senderaccountno, sendername, senderemail, recieveraccountno, recievername, recieveremail, amount, recievercurrbal, recieverupdatebal, sendercurrbal, senderupdatebal } = req.body;
 
-    if (!senderaccountno || !sendername || !senderemail || !recieveraccountno || !recievername || !recieveremail || !amount) {
+    if (!senderaccountno || !sendername || !senderemail || !recieveraccountno || !recievername || !recieveremail || !amount ||  !recievercurrbal  || !recieverupdatebal  || !sendercurrbal  ||  !senderupdatebal ) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 

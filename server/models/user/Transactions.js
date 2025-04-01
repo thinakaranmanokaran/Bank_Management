@@ -26,6 +26,22 @@ const TransactionSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    recievercurrbal: {
+        type: String,
+        required: true,
+    },
+    recieverupdatebal: {
+        type: String,
+        required: true,
+    },
+    sendercurrbal: {
+        type: String,
+        required: true,
+    },
+    senderupdatebal: {
+        type: String,
+        required: true,
+    },
     amount: {
         type: String,
         required: true,

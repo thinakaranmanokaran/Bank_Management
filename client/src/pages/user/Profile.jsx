@@ -57,7 +57,7 @@ const Profile = () => {
                 <div className='grid grid-cols-4 gap-4 ' >
                     {
                         ImageChoose.map((Data, index) => (
-                            <div key={Data.id} className={` transitiona-all duration-300 rounded-full cursor-pointer p-1 ${selectProfile === Data.id ? "border-2 border-green " : "border-none"}  `}  >
+                            <div key={Data.id} className={` transitiona-all duration-300 rounded-full cursor-pointer p-1 w-fit ${selectProfile === Data.id ? "border-2 border-green " : "border-none"}  `}  >
                                 <img onClick={() => setSelectProfile(Data.id)} className={`${selectProfile === Data.id ? "max-h-[108px] w-[108px]" : "w-28 max-h-28 "} object-cover object-top rounded-full  `} src={Data.img} alt="" srcset="" />
                             </div>
                         ))

@@ -3,6 +3,7 @@ import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 import { useAuth } from './../../contexts';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,6 +13,7 @@ const FaceAuthentication = () => {
     const [detectedFace, setDetectedFace] = useState(null);
 
     const { currentUser } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadModels = async () => {
@@ -86,7 +88,8 @@ const FaceAuthentication = () => {
                     const faceToken = response.data.faceToken;
                     if (faceToken) {
                         localStorage.setItem('faceToken', faceToken);
-                        alert('Face data sent to backend successfully and token stored!');
+                        // alert('Face data sent to backend successfully and token stored!');
+                        navigate('/user/dashboard')
                     } else {
                         alert('Face data sent, but no token received.');
                     }
@@ -121,7 +124,7 @@ const FaceAuthentication = () => {
                     <div className="w-full flex-col items-center relative z-20">
                         <Webcam ref={webcamRef} screenshotFormat="image/jpeg" className="rounded-4xl shadow-md border border-white max-h-[70vh]" />
                         <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
-                        <div className="flex justify-center p-6 space-x-4">
+                        <div className="flex justify-center p-6 space-x-4 absolute left-1/2 -translate-x-1/2 z-50">
                             <button onClick={captureAndDetect} className="bg-green text-dark px-16 cursor-pointer py-4 rounded-full text-xl font-sfpro focus:bg-white disabled:cursor-not-allowed hover:scale-110 ">Detect Face</button>
                         </div>
                     </div>

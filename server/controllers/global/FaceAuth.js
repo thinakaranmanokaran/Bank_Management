@@ -111,6 +111,25 @@ exports.storeFace = async (req, res) => {
     }
 };
 
+exports.signinFace = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        // Query the 'users' collection
+        const user = await FaceAuth.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User email not found' });
+        }
+
+        // return res.status(200).json({ message: 'Success', user });
+        sendFaceToken({ email }, 200, res);
+    } catch (error) {
+        console.error('Error in addUser:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+
 exports.verifyFace = async (req, res) => {
     try {
         if (!req.file) {

@@ -15,6 +15,12 @@ const MobPay = () => {
     const [amount, setAmount] = useState('');
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
+
+    const [ senderCB, setSenderCB ] = useState('');
+    const [ senderUB, setSenderUB ] = useState('');
+    const [ recieverCB, setRecieverCB ] = useState('');
+    const [ recieverUB, setRecieverUB ] = useState('');
+
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -38,14 +44,30 @@ const MobPay = () => {
         try {
             const emailResponse = await axios.get(`${API_URL}/api/users/email/${accNumber}`);
             setEmail(emailResponse.data.email);
-
+    
             const nameResponse = await axios.get(`${API_URL}/api/users/name/${emailResponse.data.email}`);
             setName(nameResponse.data.name);
+    
+            const senderCurrBal = await axios.get(`${API_URL}/api/users/balance/${currentAcc?.accountno}`);
+            const recieverCurrBal = await axios.get(`${API_URL}/api/users/balance/${accNumber}`);
+    
+            const senderBalance = Number(senderCurrBal.data.account.balance);
+            const recieverBalance = Number(recieverCurrBal.data.account.balance);
+            const transferAmount = Number(amount);
+    
+            setSenderCB(senderBalance);
+            setRecieverCB(recieverBalance);
+    
+            // Correct balance calculations
+            setSenderUB(senderBalance - transferAmount);
+            setRecieverUB(recieverBalance + transferAmount);
+    
             setError('');
         } catch (err) {
             setError(err.response?.data?.message || 'Error fetching data');
         }
     };
+    
 
     const handleTransaction = async () => {
         const transactionData = {
@@ -56,6 +78,10 @@ const MobPay = () => {
             recievername: name,
             recieveremail: email,
             amount,
+            recievercurrbal: recieverCB ,
+            recieverupdatebal: recieverUB,
+            sendercurrbal: senderCB,
+            senderupdatebal: senderUB,
         };
 
         const notificationData = {

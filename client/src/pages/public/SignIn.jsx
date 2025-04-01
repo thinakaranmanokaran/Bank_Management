@@ -33,6 +33,7 @@ const SignIn = () => {
                 alert('User signed in successfully!');
                 localStorage.setItem('token', data.token);
                 handleAccInfo(formData.email);
+                handleFaceInfo(formData.email);
                 setFormData({ email: '', password: '' });
                 navigate("/");
             } else {
@@ -57,6 +58,28 @@ const SignIn = () => {
             if (response.ok && data.success) {
                 alert(`Account created successfully! Your Account Number: ${data.accountno}`);
                 localStorage.setItem('accountToken', data.accountToken);
+            } else {
+                alert(data.message || 'Something went wrong!');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while creating the account.');
+        }
+    };
+
+    const handleFaceInfo = async (email) => {
+        try {
+            const response = await fetch(`${API_URL}/api/users/store-face/set`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                alert(`Account created successfully! Your Account Number: ${data.accountno}`);
+                localStorage.setItem('faceToken', data.faceToken);
             } else {
                 alert(data.message || 'Something went wrong!');
             }
