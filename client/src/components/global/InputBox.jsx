@@ -38,7 +38,7 @@ const InputBox = ({
                 className={`shadow-sm  focus:border-[1px] focus:border-green outline-none focus:outline-none px-2 py-1.5 focus:pt-7 focus:pb-2 transition-all duration-300 focus:rounded-lg border-[1px] border-whiote peer ${inputValue
                         ? 'pt-7  outline-none border-[1px] pb-2 border-green rounded-lg'
                         : 'px-2 py-1.5'
-                    } ${inputCN}`}
+                    } ${inputCN} ${inputType === 'date' ? 'text-white' : ''}`}
                 required={required}
             />
             <label
