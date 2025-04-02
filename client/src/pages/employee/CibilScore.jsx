@@ -72,6 +72,15 @@ const CibilScore = () => {
         }
     };
 
+    // Clear Deposit Function
+    const handleClear = async () => {
+        try {
+            await axios.delete(`${API_URL}/api/users/loan/application/${accountno}`);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Error deleting deposit');
+        }
+    };
+
     const handleApprove = async () => {
         if (!window.confirm(`Are you sure you want to approve the Loan for Account No: ${accountno}?`)) return;
 
@@ -87,10 +96,8 @@ const CibilScore = () => {
             });
             await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
             alert(response.data.message);
-            handleDelete()
+            handleClear()
             navigate('/employee/loan');
-            // Optionally refresh deposits
-            // setDeposits(prev => prev.filter(deposit => deposit.accountno !== accountno));
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to approve deposit');
         }

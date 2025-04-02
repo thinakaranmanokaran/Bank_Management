@@ -63,7 +63,7 @@ const Header = () => {
     const handleClear = async (id) => {
         try {
             await axios.delete(`${API_URL}/api/users/notification/${id}`);
-            alert('Notification cleared successfully!');
+            // alert('Notification cleared successfully!');
             setNotificationData((prevData) => prevData.filter((item) => item._id !== id)); // Update state after deletion
         } catch (err) {
             setError(err.response?.data?.message || 'Error deleting notification');
@@ -74,7 +74,7 @@ const Header = () => {
     const handleClearAll = async () => {
         try {
             await axios.delete(`${API_URL}/api/users/notifications/${currentAcc?.accountno}`);
-            alert('All notifications cleared successfully!');
+            // alert('All notifications cleared successfully!');
             setNotificationData([]); // Clear all notifications in state
         } catch (err) {
             setError(err.response?.data?.message || 'Error deleting all notifications');

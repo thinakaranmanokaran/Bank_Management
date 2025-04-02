@@ -47,13 +47,13 @@ const deleteAllNotifications = async (req, res) => {
     const { accountno } = req.params;
 
     try {
-        const deletedNotification = await Notification.findOneAndDelete({ accountno });
+        const deletedNotifications = await Notification.deleteMany({ accountno });
 
-        if (!deletedNotification) {
-            return res.status(404).json({ message: '  Notification not found!' });
+        if (deletedNotifications.deletedCount === 0) {
+            return res.status(404).json({ message: 'No notifications found for this account!' });
         }
 
-        res.status(200).json({ message: '  Notification deleted successfully!' });
+        res.status(200).json({ message: 'All notifications deleted successfully!' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
