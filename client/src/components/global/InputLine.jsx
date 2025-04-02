@@ -4,7 +4,7 @@ const InputLine = ({
   label = 'Name',
   type = 'text',
   name = '',
-  id = '',
+  id = 'inputline',
   className = '',
   value,
   onChange,

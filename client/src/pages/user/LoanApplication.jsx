@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { InputLine } from '../../components';
 import { useAcc } from '../../contexts';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const LoanApplication = () => {
     const [formData, setFormData] = useState({});
@@ -16,6 +17,12 @@ const LoanApplication = () => {
     };
 
     console.log(currentAcc?.accountno)
+
+    const notificationData = {
+        accountno: currentAcc?.accountno,
+        type: "loan",
+        message: `Loan application sent seccessfully!  `,
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,6 +39,7 @@ const LoanApplication = () => {
                 },
                 body: JSON.stringify(applicationData),
             });
+            await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
 
             const data = await response.json();
             if (response.ok) {

@@ -89,3 +89,31 @@ button{
 .animate-orbit {
   animation: orbit 1s infinite;
 }
+
+input:-webkit-autofill {
+  background-color: transparent !important;
+  -webkit-text-fill-color: white !important; /* Force text color */
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  background-color: transparent !important;
+  -webkit-text-fill-color: white !important; /* Apply text color */
+}
+
+#inputline:-webkit-autofill {
+  background-color: transparent !important;
+  -webkit-text-fill-color: white !important; /* Force text color */
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+#inputline:-webkit-autofill:hover, 
+#inputline:-webkit-autofill:focus, 
+#inputline:-webkit-autofill:active {
+  background-color: transparent !important;
+  -webkit-text-fill-color: white !important; /* Apply text color */
+}

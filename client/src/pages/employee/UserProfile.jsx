@@ -8,7 +8,7 @@ import images from '../../assets/images'
 const UserProfile = () => {
     const { accountno } = useParams();
 
-    if(!accountno) {
+    if (!accountno) {
         return <div>You Need a Account No</div>
     }
 
@@ -19,12 +19,19 @@ const UserProfile = () => {
     const [authData, setAuthData] = useState({});
     const [transactionData, setTransactionData] = useState({});
     const [loanData, setLoanData] = useState({});
-    const [balance, setBalance ] =useState({});
+    const [balance, setBalance] = useState({});
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
+
+            const notificationData = {
+                accountno: accountno,
+                type: "loan",
+                message: `Reviewing Documents & Checking Eligibility, be patient `,
+            }
+
             try {
                 // First API call to get account data
                 const response = await axios.get(`${API_URL}/api/users/email/${accountno}`);
@@ -67,6 +74,20 @@ const UserProfile = () => {
         return <div className="text-red-500">Error: {error}</div>;
     }
 
+    const handleSubmit = async () => {
+        const notificationData = {
+            accountno: accountno,
+            type: "loan",
+            message: `Approval in Progress `,
+        }
+        try {
+            await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
+            // alert("notification sent")
+        } catch (error) {
+            alert(error)
+        }
+    }
+
     return (
         <div>
             {/* <h1>User Profile</h1> */}
@@ -99,7 +120,7 @@ const UserProfile = () => {
                             <p className='text-light  ' >Created At: </p><div>{new Date(authData?.createdAt).toLocaleDateString()}</div>
                         </div>
                     </div>
-                    <Link to={`/employee/cibil-score/d/${accountno}`} >
+                    <Link to={`/employee/cibil-score/d/${accountno}`} onClick={handleSubmit}  >
                         <div className=' w-full text-center cursor-pointer font-sfpro  bg-green text-dark py-4 rounded-3xl text-xl mt-6 flex items-center justify-center space-x-4' > <span>Check Cibil Score</span> <img src={images.Star} className='w-8 h-8 -ml-3' alt="" srcset="" /> </div>
                     </Link>
                 </div>

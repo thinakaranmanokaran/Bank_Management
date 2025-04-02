@@ -35,10 +35,10 @@ const InputBox = ({
                 placeholder={placeHolder}
                 onChange={handleInputChange} // Properly handle the change event
                 disabled={disabled}
-                className={`shadow-sm  focus:border-[1px] focus:border-green outline-none focus:outline-none px-2 py-1.5 focus:pt-7 focus:pb-2 transition-all duration-300 focus:rounded-lg border-[1px] border-whiote peer ${inputValue
+                className={`shadow-sm  focus:border-[1px] focus:border-green outline-none focus:outline-none px-2 py-1.5 focus:pt-7 focus:pb-2 transition-all duration-300 focus:rounded-lg border-[1px] border-white peer text-white ${inputValue
                         ? 'pt-7  outline-none border-[1px] pb-2 border-green rounded-lg'
                         : 'px-2 py-1.5'
-                    } ${inputCN} ${inputType === 'date' ? 'text-white' : ''}`}
+                    } ${inputCN} ${inputType === 'date' ? 'text-white [&::-webkit-calendar-picker-indicator]:invert' : ''}`}
                 required={required}
             />
             <label

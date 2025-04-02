@@ -103,7 +103,7 @@ const Header = () => {
                     <div>{formattedTime}</div>
                 </div>
                 <div className='flex items-center -space-x-1' >
-                    <div onClick={() => showNotifications(true)} className='text-2xl p-3 hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' > <IoNotificationsOutline /></div>
+                    <div onClick={() => showNotifications(true)} className='text-2xl p-3 relative hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' > <IoNotificationsOutline /> {notifcationData.length > 0 ? <div className={` absolute font-sfreg text-[12px] top-2 right-2 w-4 h-4 rounded-full flex justify-center items-center   bg-white text-dark  ${notifcationData.length > 10 ? "w-6 -mr-2" : ""}`} >{notifcationData.length > 9 ? "9+" : notifcationData.length}</div> : ""}</div>
                     <div className='text-2xl p-3 hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' onClick={() => showOptions(true)} > <RiSettings4Fill /></div>
                     <div className='text-3xl p-2 ml-6 bg-green  cursor-pointer transition-all duration-300 rounded-full text-black  ' onClick={() => setLogout(true)} > <LiaPowerOffSolid /></div>
                 </div>
@@ -120,7 +120,7 @@ const Header = () => {
                         <button onClick={() => showOptions(false)} className='text-base p-2 rounded-full hover:bg-[#ffffff20] transition-all duration-300 ' ><RiCloseLargeLine /></button>
                     </div>
                 </div>
-                <div className={`${notifications ? "right-0" : "right-[-100%]"} bg-[#00000020] backdrop-blur-2xl   transition-transform duration-300 w-80 fixed p-6 py-10  top-0  h-full z-30 `} >
+                <div className={`${notifications ? "right-0" : "right-[-100%]"} bg-[#00000020] backdrop-blur-2xl  oveflow-y-scroll transition-transform duration-300 w-80 fixed p-6 py-10  top-0  h-full z-30 `} >
                     <div className='flex justify-between items-center ' >
                         <div className='font-sfpro  text-2xl ' >Notifications</div>
                         <button onClick={() => showNotifications(false)} className='text-base p-2 rounded-full hover:bg-[#ffffff20] transition-all duration-300 ' ><RiCloseLargeLine /></button>
@@ -128,7 +128,7 @@ const Header = () => {
                     <div className='mt-6 ' >
                         {
                             notifcationData.map((Data) => (
-                                <div key={Data._id} className="bg-white mt-4 text-dark relative rounded-2xl p-4" >
+                                <div key={Data._id} className="bg-white mt-4 text-dark relative rounded-2xl p-4 min-h-20" >
                                     <div className='flex  ' >
                                         {Data?.type === "transaction" ? (<div className="text-2xl font-gotham bg-dark text-white  rounded-full min-w-12 h-12 flex justify-center items-center  " >{Data?.name.charAt(0)}</div>) : ("")}
                                         <div className='ml-2 text-base font-sfreg  ' >
@@ -144,7 +144,7 @@ const Header = () => {
                     </div>
                     {
                         notifcationData.length === 0 ?
-                            <div className='font-sfreg text-lg ' >No notifications</div> : 
+                            <div className='font-sfreg text-lg ' >No notifications</div> :
                             <div className="flex justify-end mt-2" >
                                 <button className="bg-[#ffffff20] backdrop-blur-2xl font-sfreg text-white px-3 py-1 text-sm rounded-full cursor-pointer" onClick={handleClearAll} >clear all</button>
                             </div>

@@ -42,6 +42,20 @@ const LoanDetails = () => {
         }).format(new Date(dateString));
     };
 
+    const handleSubmit  = async (Data) => {
+        
+        const notificationData = {
+            accountno: Data?.accountno,
+            type: "loan",
+            message: `Reviewing Documents & Checking Eligibility, be patient `,
+        }
+        try {
+            await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
+            // alert("notification sent")
+        } catch (error) {
+            alert(error)
+        }
+    }
 
     return (
         <div className=' w-full' >
@@ -74,7 +88,7 @@ const LoanDetails = () => {
                                         <div>Income: <span className='text-green'>₹{Data.income}</span></div>
                                         <div>Loan Amount: <span className='text-green'>₹{Data.loanamount}</span></div>
                                         <div>Loan Purpose: <span className='text-green'>{Data.loanpurpose}</span></div>
-                                        <Link className='' to={`/employee/user-profile/d/${Data.accountno}`} ><div className='bg-green text-dark  text-center py-2 mt-2 rounded-2xl font-sfpro cursor-pointer ' >Explore more</div></Link>
+                                        <Link className='' to={`/employee/user-profile/d/${Data.accountno}`} ><div className='bg-green text-dark  text-center py-2 mt-2 rounded-2xl font-sfpro cursor-pointer ' onClick={() => handleSubmit(Data)} >Explore more</div></Link>
                                     </div>
                                 ))
                             }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, plugins } from 'chart.js';
 import { useBalance } from '../../contexts';
@@ -8,6 +8,7 @@ import { useBalance } from '../../contexts';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const CibilScore = () => {
+    const navigate = useNavigate();
 
     const { accountno } = useParams();
     const { balance } = useBalance();
@@ -53,9 +54,18 @@ const CibilScore = () => {
 
     // Delete Deposit Function
     const handleDelete = async () => {
+
+        const notificationData = {
+            accountno: accountno,
+            type: "loan",
+            message: `Unfortunately, loan rejected`,
+        }
+
         try {
             await axios.delete(`${API_URL}/api/users/loan/application/${accountno}`);
-            alert('Deposit deleted successfully!');
+            await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
+            navigate('/employee/loan');
+            // alert('Loan Rejected!');
             // fetchDeposits(); // Refresh Data
         } catch (err) {
             setError(err.response?.data?.message || 'Error deleting deposit');
@@ -65,13 +75,20 @@ const CibilScore = () => {
     const handleApprove = async () => {
         if (!window.confirm(`Are you sure you want to approve the Loan for Account No: ${accountno}?`)) return;
 
+        const notificationData = {
+            accountno: accountno,
+            type: "loan",
+            message: `Loan Approved!`,
+        }
+
         try {
             const response = await axios.put(`${API_URL}/api/users/balance/${accountno}`, {
                 balance: loanData?.loanamount,
             });
-
+            await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
             alert(response.data.message);
             handleDelete()
+            navigate('/employee/loan');
             // Optionally refresh deposits
             // setDeposits(prev => prev.filter(deposit => deposit.accountno !== accountno));
         } catch (err) {
