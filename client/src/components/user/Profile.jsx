@@ -68,7 +68,7 @@ const Profile = () => {
                     </div>
                     {/* {error && <h1 className='font-gotham'>{error}</h1>} */}
                     <div className='w-full justify-center py-2 flex'>
-                        <h1 className='text-5xl font-gotham text-end w-full pr-2 '>{balance}</h1>
+                        <h1 className='text-5xl font-gotham text-end w-full pr-2 '>{Number(balance).toLocaleString('en-IN')}</h1>
                     </div>
                 </div>
             </div>
