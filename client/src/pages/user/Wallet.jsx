@@ -21,7 +21,7 @@ const Wallet = () => {
 
                 if (transactions.length > 0) {
                     const lastTransaction = transactions[transactions.length - 1]; // Get the latest transaction
-                    setPrevBal(lastTransaction.sendercurrbal); // Set previous balance
+                    setPrevBal( currentAcc?.accountno === lastTransaction.senderaccno ? lastTransaction.sendercurrbal : lastTransaction.recievercurrbal); // Set previous balance
                 } else {
                     setPrevBal(balance); // If no transaction, show current balance
                 }
