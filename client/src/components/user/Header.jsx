@@ -120,28 +120,36 @@ const Header = () => {
                         <button onClick={() => showOptions(false)} className='text-base p-2 rounded-full hover:bg-[#ffffff20] transition-all duration-300 ' ><RiCloseLargeLine /></button>
                     </div>
                 </div>
-                <div className={`${notifications ? "right-0" : "right-[-100%]"} bg-[#00000020] backdrop-blur-2xl  oveflow-y-scroll transition-transform duration-300 w-80 fixed p-6 py-10  top-0  h-full z-30 `} >
+                <div className={`${notifications ? "right-0" : "right-[-100%]"} bg-[#00000020] backdrop-blur-2xl  oveflow-scroll transition-transform duration-300 w-80 fixed p-6 py-10  top-0  h-full z-30 `} >
                     <div className='flex justify-between items-center ' >
                         <div className='font-sfpro  text-2xl ' >Notifications</div>
                         <button onClick={() => showNotifications(false)} className='text-base p-2 rounded-full hover:bg-[#ffffff20] transition-all duration-300 ' ><RiCloseLargeLine /></button>
                     </div>
-                    <div className='mt-6 ' >
-                        {
-                            notifcationData.map((Data) => (
-                                <div key={Data._id} className="bg-white mt-4 text-dark relative rounded-2xl p-4 min-h-20" >
-                                    <div className='flex  ' >
-                                        {Data?.type === "transaction" ? (<div className="text-2xl font-gotham bg-dark text-white  rounded-full min-w-12 h-12 flex justify-center items-center  " >{Data?.name.charAt(0)}</div>) : ("")}
-                                        <div className='ml-2 text-base font-sfreg  ' >
-                                            <div>{Data.message}</div>
-                                            {/* <div>{Data.accountno}</div>
-                                            <div>{currentAcc?.accountno}</div> */}
-                                            <button className='absolute bottom-2 right-2 bg-green text-dark px-3 py-1 text-xs rounded-full font-sfreg cursor-pointer ' onClick={() => handleClear(Data._id)} >clear</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        }
+                    <div className="mt-6 h-full overflow-y-auto max-h-[77vh] py-6 "  style={{  scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+    {
+        notifcationData.map((Data) => (
+            <div key={Data._id} className="bg-white mt-4 text-dark relative rounded-2xl p-4 min-h-20">
+                <div className="flex">
+                    {Data?.type === "transaction" ? (
+                        <div className="text-2xl font-gotham bg-dark text-white rounded-full min-w-12 h-12 flex justify-center items-center">
+                            {Data?.name.charAt(0)}
+                        </div>
+                    ) : null}
+                    <div className="ml-2 text-base font-sfreg">
+                        <div>{Data.message}</div>
+                        <button
+                            className="absolute bottom-2 right-2 bg-green text-dark px-3 py-1 text-xs rounded-full font-sfreg cursor-pointer"
+                            onClick={() => handleClear(Data._id)}
+                        >
+                            clear
+                        </button>
                     </div>
+                </div>
+            </div>
+        ))
+    }
+</div>
+
                     {
                         notifcationData.length === 0 ?
                             <div className='font-sfreg text-lg ' >No notifications</div> :
