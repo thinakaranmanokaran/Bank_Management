@@ -95,7 +95,5 @@ MIT © [Thinakaran Manokaran](https://thinakaranmanokaran.netlify.app/)
 
 ---
 
-**✨ Pro Tip**: Add a **demo GIF** ([use ScreenToGif](https://www.screentogif.com/)) to show the app in action!  
 
---- 
 
