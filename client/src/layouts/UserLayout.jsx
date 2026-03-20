@@ -24,13 +24,14 @@ const UserLayout = () => {
             } catch (error) {
                 console.error("Invalid token", error);
                 localStorage.removeItem("faceToken");
-                window.location.href = '/faceauth'; // Use window.location instead
+                navigate('/faceauth'); // Use navigate instead of window.location.href
             }
         } else {
-            window.location.href === '/signin' ? '' : '/signin'; // Redirect if no token
+            // alert("No face token found. Please complete face authentication.");
+            navigate('/signin'); // Redirect if no token
         }
-    }, []); // Only runs once
-    
+    }, [navigate]); // Only runs once
+
     // console.log(currentFace?.email)
     // console.log(currentFace?.faceData)
 

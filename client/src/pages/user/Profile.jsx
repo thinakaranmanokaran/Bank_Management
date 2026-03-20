@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import images from './../../assets/images'
 import axios from 'axios'
 import { useAuth } from '../../contexts'
+import { jwtDecode } from 'jwt-decode'
 
 const Profile = () => {
 
@@ -39,8 +40,19 @@ const Profile = () => {
                 `${API_URL}/api/users/register/update/${currentUser?.email}`,
                 { img: selectedImage.id }
             );
-
-            alert(response.data.message);
+            const token = localStorage.getItem('token');
+            // alert(token)
+            const userData = jwtDecode(token);
+            // alert(userData)
+            const email = userData.email;
+            // alert(email)
+            const tokenResponse = await axios.get(`${API_URL}/api/users/register/token/${email}`);
+            const newToken = tokenResponse.data.token;
+            // alert(newToken)
+            // console.log(tokenResponse);
+            localStorage.setItem('token', newToken);
+            window.location.reload();
+            // alert(response.data.message);
         } catch (error) {
             console.error(error.response?.data?.message || 'An error occurred');
         }
@@ -54,10 +66,10 @@ const Profile = () => {
                 <div>
                     <h1 className='text-4xl font-lato mb-6' >Change Profile</h1>
                 </div>
-                <div className='grid grid-cols-4 gap-4 ' >
+                <div className='grid grid-cols-4 gap-4 transition-all duration-300' >
                     {
                         ImageChoose.map((Data, index) => (
-                            <div key={Data.id} className={` transitiona-all duration-300 rounded-full cursor-pointer p-1 w-fit ${selectProfile === Data.id ? "border-2 border-green " : "border-none"}  `}  >
+                            <div key={Data.id} className={` transition-all duration-300 rounded-full cursor-pointer p-1 w-fit ${selectProfile === Data.id ? "border-2 transition-all duration-300 border-green " : "transition-all duration-300 border-none"}  `}  >
                                 <img onClick={() => setSelectProfile(Data.id)} className={`${selectProfile === Data.id ? "max-h-[108px] w-[108px]" : "w-28 max-h-28 "} object-cover object-top rounded-full  `} src={Data.img} alt="" srcset="" />
                             </div>
                         ))

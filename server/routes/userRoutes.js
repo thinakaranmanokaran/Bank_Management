@@ -4,12 +4,12 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 
 const { registerRequest, signinRequest } = require('../middlewares/global/Authentication');
-const { registerUser, signinUser, getUserNameByEmail, getAuthData, updateUserProfile } = require('../controllers/global/Authentication');
+const { registerUser, signinUser, getUserNameByEmail, getAuthData, updateUserProfile, getAuthDataToken } = require('../controllers/global/Authentication');
 
 const { AccountRequest } = require('../middlewares/user/Account');
 const { addAccountDetails, getAccountDetails, updateAccountDetails, getUserEmailByAccNo, setAccountDetails, getAccountDetailsByEmail } = require('../controllers/user/Account');
 
-const { verifyFace, registerFace, storeFace, signinFace } = require('../controllers/global/FaceAuth');
+const { verifyFace, registerFace, storeFace, signinFace, getFaceDataAsToken } = require('../controllers/global/FaceAuth');
 const { userDeposit } = require('../controllers/user/Deposit');
 const { DepositRequest } = require('../middlewares/user/Deposit');
 const { validateTransaction } = require('../middlewares/user/Transactions');
@@ -22,6 +22,7 @@ const { NotificationRequest } = require('../middlewares/user/Notification');
 // Registration route
 userRouter.post('/register', registerRequest, registerUser);
 userRouter.get('/register/data/:email', getAuthData);
+userRouter.get('/register/token/:email', getAuthDataToken);
 userRouter.put('/register/update/:email', updateUserProfile);
 userRouter.post('/signin', signinRequest, signinUser);
 
@@ -30,6 +31,7 @@ userRouter.post('/register-face', upload.single('image'), registerFace);
 userRouter.post('/store-face', upload.single('image'), storeFace);
 userRouter.post('/store-face/set', signinFace);
 userRouter.post('/verify-face', upload.single('image'), verifyFace);
+userRouter.get('/face-token/:email', getFaceDataAsToken);
 
 userRouter.post('/balance', addAccountDetails );
 userRouter.post('/balance/set', setAccountDetails );

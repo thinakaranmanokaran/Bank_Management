@@ -11,7 +11,7 @@ const LandingPage = () => {
     return (
         <div className=' bg-dark w-full h-full p-16 px-32 text-white ' >
             <div>
-                <div className=' font-halo flex  items-center justify-between ' >
+                <div className=' font-halo flex  items-center justify-between transition-all duration-300' >
                     <h1 className='text-2xl flex ' >Bank Management</h1>
                     {
                         currentUser?.role === "admin" ? "" : currentUser?.role === "employee" ?
@@ -44,11 +44,11 @@ const LandingPage = () => {
                                 </Link>
                             </div>
                     }
-                    <div className=' w-full max-w-72 flex justify-end' >
+                    <div className=' w-full max-w-72 flex justify-end transition-all duration-300' >
                         {
                             currentUser ?
                                 <Link to={`${currentUser?.role === "user" ? "/user/dashboard" : currentUser?.role === "employee" ? "/employee/profile" : "/admin/employeeadd"}`} className=' flex justify-between items-center border-2 border-green rounded-full hover:pr-4 group transition-all duration-300 ' >
-                                    <div className="text-xl group-hover:mr-2 font-main px-8 py-3 rounded-3xl bg-green text-black transition-all duration-300  ">{currentUser.name}</div>
+                                    <div className="text-xl group-hover:mr-2 font-main px-8 py-3 rounded-3xl bg-green text-nowrap text-black transition-all duration-300  ">{currentUser.name}</div>
                                     <span className=' text-green text-2xl absolute transition-all duration-300 group-hover:static ' >
                                         <HiArrowUpRight />
                                     </span>

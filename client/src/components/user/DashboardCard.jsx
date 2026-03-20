@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import images from '../../assets/images'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const DashboardCard = ({ Data }) => {
     return (

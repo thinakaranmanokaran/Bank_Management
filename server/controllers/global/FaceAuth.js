@@ -10,6 +10,8 @@ const { Canvas, Image, loadImage, ImageData } = canvas; // Import canvas
 const { FaceAuth } = require('./../../models/global/FaceAuth');
 const path = require('path');
 const sendFaceToken = require('../../utils/faceToken');
+const sendToken = require('../../utils/jwtHelper');
+const { log } = require('console');
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
 // Load FaceAPI models (ensure this runs before face detection)
@@ -160,5 +162,25 @@ exports.verifyFace = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ error: `Face authentication failed: ${error.message}` });
+    }
+};
+
+
+exports.getFaceDataAsToken = async (req, res) => {
+    console.log('Received request for getFaceDataAsToken with params:', req.params);
+    try {
+        const { email } = req.params;
+        const user = await FaceAuth.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User email not found' });
+        }
+
+        console.log('Token:', user);
+
+        sendToken({ email }, 200, res);
+    } catch (error) {
+        console.error('Error in getFaceDataAsToken:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };

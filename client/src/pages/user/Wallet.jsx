@@ -26,6 +26,7 @@ const Wallet = () => {
                     setPrevBal(balance); // If no transaction, show current balance
                 }
             } catch (err) {
+                console.error('Error fetching transactions:', err);
                 setError(err.response?.data?.message || 'Error fetching deposits');
             } finally {
                 setLoading(false);
@@ -63,7 +64,7 @@ const Wallet = () => {
                             </div>
                         </div>
                     </div>
-                    {error && <div className="text-red-500">{error}</div>}
+                    {/* {error && <div className="text-red-500">{error}</div>} */}
                 </div>
             </div>
         </div>

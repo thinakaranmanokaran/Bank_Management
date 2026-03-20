@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import UserLayout from "../layouts/UserLayout";
 import { UserDashBoard, UserDeposit, UserFAQ, UserHome, UserLoanApplication, UserMobPay, UserPrintHistory, UserProfile, UserRecieveMoney, UserSendMoney, UserServices, UserTransactions, UserWallet, } from "../pages";
 import DashBoardLayout from "../layouts/DashBoardLayout";
@@ -9,6 +9,14 @@ const UserDashBoardRoutes = () => {
 
     const [loading, setLoading] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const token = localStorage.getItem('token');
+    useEffect(() => {
+        if (!token && location.pathname.startsWith("/user")) {
+            navigate('/register');
+        }
+    }, [token, location]);
 
     useEffect(() => {
         setLoading(true);

@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import UserLayout from "../layouts/UserLayout";
 import { UserDashBoard, UserDeposit, UserFAQ, UserHome, UserLoanApplication, UserMobPay, UserPrintHistory, UserProfile, UserServices, UserTransactions, UserWallet, } from "../pages";
@@ -8,12 +8,17 @@ import { Loader } from "../components";
 const UserRoutes = () => {
     const [loading, setLoading] = useState(false);
     const location = useLocation();
+    const token = localStorage.getItem('token');
+    const navigate = useNavigate();
 
     useEffect(() => {
         setLoading(true);
         const timer = setTimeout(() => setLoading(false), 1500); // Adjust time as needed
+        if (!token && location.pathname.startsWith("/user")) {
+            navigate('/register');
+        }
         return () => clearTimeout(timer);
-    }, [location]);
+    }, [location, token]);
 
     return loading ? (
         <Loader />

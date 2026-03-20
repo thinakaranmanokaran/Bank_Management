@@ -1,3 +1,5 @@
+// Public.jsx
+
 import { Routes, Route, useLocation } from "react-router-dom";
 import { FaceAuthentication, Home, Register, SignIn } from "../pages";
 import PublicLayout from "../layouts/PublicLayout";

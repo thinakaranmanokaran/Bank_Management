@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { InputBox } from '../../components'
 import { Link, useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
@@ -6,11 +6,18 @@ const API_URL = import.meta.env.VITE_API_URL;
 const SignIn = () => {
 
     const navigate = useNavigate();
-
+    const [faceToken, setFaceToken] = useState(null);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            navigate('/');
+        }
+    }, [navigate]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -19,6 +26,7 @@ const SignIn = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
             const response = await fetch(`${API_URL}/api/users/signin`, {
                 method: 'POST',
@@ -26,19 +34,41 @@ const SignIn = () => {
                 body: JSON.stringify(formData),
             });
 
-            const text = await response.text(); // Read response as text
-            const data = text ? JSON.parse(text) : {}; // Parse only if not empty
+            const data = await response.json();
 
             if (response.ok && data.success) {
+
+                // Fetch face token AFTER login success
+                try {
+                    const faceTokenResponse = await fetch(`${API_URL}/api/users/face-token/${formData.email}`);
+                    const faceTokenData = await faceTokenResponse.json();
+
+                    if (faceTokenResponse.ok && faceTokenData.success) {
+                        const token = faceTokenData.faceToken;
+
+                        setFaceToken(token);
+                        localStorage.setItem('faceToken', token);
+                    } else {
+                        console.warn('Face token error:', faceTokenData.message);
+                    }
+                } catch (err) {
+                    console.error('Face token fetch error:', err);
+                }
+
                 alert('User signed in successfully!');
                 localStorage.setItem('token', data.token);
+
                 handleAccInfo(formData.email);
                 handleFaceInfo(formData.email);
+
                 setFormData({ email: '', password: '' });
-                navigate("/");
+
+                window.location.reload();
+
             } else {
                 alert(data.message || 'Invalid credentials!');
             }
+
         } catch (error) {
             console.error('Error:', error);
             alert('An error occurred while signing in.');

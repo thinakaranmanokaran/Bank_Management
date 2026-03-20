@@ -1,3 +1,5 @@
+// Home.jsx
+
 import React from 'react'
 import { Section, LandingPage } from './../../components'
 

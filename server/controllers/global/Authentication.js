@@ -136,3 +136,20 @@ exports.getUserNameByEmail = async (req, res) => {
 };
 
 
+// Get user data by email with JWT token
+exports.getAuthDataToken = async (req, res) => {
+  try {
+    const { email } = req.params;
+    const user = await Authentication.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    // Send user data along with a new token
+    sendToken(user, 200, res);
+  }
+  catch (error) {
+    console.error('Error in getAuthData:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

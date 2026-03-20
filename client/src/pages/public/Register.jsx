@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { InputBox } from '../../components';
 import { Link, useNavigate } from "react-router-dom";
 
@@ -15,6 +15,13 @@ const Register = () => {
         dob: '',
         img: '',
     });
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            navigate('/');
+        }
+    }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -37,7 +44,9 @@ const Register = () => {
                 localStorage.setItem('token', data.token);
                 handleAccInfo(formData.email);
                 setFormData({ name: '', email: '', phone: '', password: '', gender: '', dob: '', img: '' });
-                navigate('/');
+                // navigate('/');
+                // Reload it
+                window.location.reload();
             } else {
                 alert(data.message || 'Something went wrong!');
             }
