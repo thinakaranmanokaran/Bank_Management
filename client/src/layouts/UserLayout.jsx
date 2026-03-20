@@ -28,7 +28,8 @@ const UserLayout = () => {
             }
         } else {
             // alert("No face token found. Please complete face authentication.");
-            navigate('/signin'); // Redirect if no token
+            navigate('/faceauth'); // Use navigate instead of window.location.href
+            // navigate('/signin'); // Redirect if no token
         }
     }, [navigate]); // Only runs once
 

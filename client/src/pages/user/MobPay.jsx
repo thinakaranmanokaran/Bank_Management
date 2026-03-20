@@ -15,16 +15,33 @@ const MobPay = () => {
     const [amount, setAmount] = useState('');
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
+    const [profileImg, setProfileImg] = useState(1);
 
-    const [ senderCB, setSenderCB ] = useState('');
-    const [ senderUB, setSenderUB ] = useState('');
-    const [ recieverCB, setRecieverCB ] = useState('');
-    const [ recieverUB, setRecieverUB ] = useState('');
+    const [senderCB, setSenderCB] = useState('');
+    const [senderUB, setSenderUB] = useState('');
+    const [recieverCB, setRecieverCB] = useState('');
+    const [recieverUB, setRecieverUB] = useState('');
 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
     const navigate = useNavigate();
+
+    const ImageChoose = [
+        { id: 1, gender: "men", img: images.Men1 },
+        { id: 2, gender: "men", img: images.Men2 },
+        { id: 3, gender: "men", img: images.Men3 },
+        { id: 4, gender: "men", img: images.Men4 },
+        { id: 5, gender: "men", img: images.Men5 },
+        { id: 6, gender: "men", img: images.Men6 },
+        { id: 7, gender: "men", img: images.Men7 },
+        { id: 8, gender: "men", img: images.Men8 },
+        { id: 9, gender: "women", img: images.Women1 },
+        { id: 10, gender: "women", img: images.Women2 },
+        // { id: 11, gender: "women", img: images.Women3 },
+        { id: 12, gender: "women", img: images.Women4 },
+        { id: 13, gender: "women", img: images.Women5 }
+    ];
 
     const handleAccChange = (e) => {
         const input = e.target.value;
@@ -44,30 +61,31 @@ const MobPay = () => {
         try {
             const emailResponse = await axios.get(`${API_URL}/api/users/email/${accNumber}`);
             setEmail(emailResponse.data.email);
-    
-            const nameResponse = await axios.get(`${API_URL}/api/users/name/${emailResponse.data.email}`);
+
+            const nameResponse = await axios.get(`${API_URL}/api/users/register/data/${emailResponse.data.email}`);
             setName(nameResponse.data.name);
-    
+            setProfileImg(nameResponse.data?.img);
+
             const senderCurrBal = await axios.get(`${API_URL}/api/users/balance/${currentAcc?.accountno}`);
             const recieverCurrBal = await axios.get(`${API_URL}/api/users/balance/${accNumber}`);
-    
+
             const senderBalance = Number(senderCurrBal.data.account.balance);
             const recieverBalance = Number(recieverCurrBal.data.account.balance);
             const transferAmount = Number(amount);
-    
+
             setSenderCB(senderBalance);
             setRecieverCB(recieverBalance);
-    
+
             // Correct balance calculations
             setSenderUB(senderBalance - transferAmount);
             setRecieverUB(recieverBalance + transferAmount);
-    
+
             setError('');
         } catch (err) {
             setError(err.response?.data?.message || 'Error fetching data');
         }
     };
-    
+
 
     const handleTransaction = async () => {
         const transactionData = {
@@ -78,7 +96,7 @@ const MobPay = () => {
             recievername: name,
             recieveremail: email,
             amount,
-            recievercurrbal: recieverCB ,
+            recievercurrbal: recieverCB,
             recieverupdatebal: recieverUB,
             sendercurrbal: senderCB,
             senderupdatebal: senderUB,
@@ -179,7 +197,7 @@ const MobPay = () => {
                 {/* Profile Display */}
                 {name && (
                     <div className='bg-[#ffffff10] p-6 rounded-4xl w-fit min-w-80 flex flex-col items-center max-w-96'>
-                        <img src={images.Profile} className='rounded-full w-40' alt="Profile" />
+                        <img src={ImageChoose.find((Data) => Data.id == Number(profileImg))?.img} className='rounded-full w-40 h-40 object-cover object-top' alt="Profile" />
                         <div className='text-3xl font-gotham mt-6'>{name}</div>
                         <div className='text-xl font-main mt-1'>{email}</div>
                     </div>
