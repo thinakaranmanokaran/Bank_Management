@@ -1,27 +1,54 @@
 const jwt = require('jsonwebtoken');
 
-const sendToken = (user, statusCode, res) => {
-  // Create the payload with all user data
-  const payload = {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-    dob: user.dob,
-    gender: user.gender,    
-    role: user.role,
-    position: user.position,
-    img: user.img,
-  };
+const sendToken = (payload, statusCode, res, type = "user") => {
 
-  // Generate the token
-  const token = jwt.sign(payload, process.env.JWT_SECRET || "defaultSecretKey", { expiresIn: '30d' });
+  let tokenPayload = {};
 
-  // Send the response
-  res.status(statusCode).json({
+  // 👤 USER TOKEN
+  if (type === "user") {
+    tokenPayload = {
+      id: payload._id,
+      name: payload.name,
+      email: payload.email,
+      phone: payload.phone,
+      dob: payload.dob,
+      gender: payload.gender,
+      role: payload.role,
+      position: payload.position,
+      img: payload.img,
+      type: "user"
+    };
+  }
+
+  // 🏦 ACCOUNT TOKEN
+  else if (type === "account") {
+    tokenPayload = {
+      accountno: payload.accountno,
+      email: payload.email,
+      balance: payload.balance,
+      type: "account"
+    };
+  }
+
+  // 🤖 FACE TOKEN
+  else if (type === "face") {
+    tokenPayload = {
+      email: payload.email,
+      type: "face"
+    };
+  }
+
+  // 🔐 GENERATE TOKEN
+  const token = jwt.sign(
+    tokenPayload,
+    process.env.JWT_SECRET || "defaultSecretKey",
+    { expiresIn: '30d' }
+  );
+
+  return res.status(statusCode).json({
     success: true,
     token,
-    data: payload,
+    data: tokenPayload
   });
 };
 

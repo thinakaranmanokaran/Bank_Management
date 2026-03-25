@@ -33,7 +33,7 @@ const UserLayout = () => {
         }
     }, [navigate]); // Only runs once
 
-    // console.log(currentFace?.email)
+    console.log(currentFace?.email)
     // console.log(currentFace?.faceData)
 
     return (
@@ -42,7 +42,7 @@ const UserLayout = () => {
             {/* <div>UserLayout</div> */}
             <div className='flex py-6 space-x-6 ' >
                 <UserProfile />
-                { currentFace?.face ? "" : <UserDialogBox /> }
+                { currentFace?.email ? "" : <UserDialogBox /> }
                 <Outlet />
             </div>
         </div>

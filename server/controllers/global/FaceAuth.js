@@ -178,7 +178,7 @@ exports.getFaceDataAsToken = async (req, res) => {
 
         console.log('Token:', user);
 
-        sendToken({ email }, 200, res);
+        return sendToken(user, 200, res, "face");
     } catch (error) {
         console.error('Error in getFaceDataAsToken:', error);
         res.status(500).json({ message: 'Server error', error: error.message });

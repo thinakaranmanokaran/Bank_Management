@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { InputBox } from '../../components'
+import React, { useEffect, useState } from 'react';
+import { InputBox } from '../../components';
 import { Link, useNavigate } from "react-router-dom";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const SignIn = () => {
 
     const navigate = useNavigate();
-    const [faceToken, setFaceToken] = useState(null);
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -14,131 +15,115 @@ const SignIn = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (token) {
-            navigate('/');
-        }
+        if (token) navigate('/');
     }, [navigate]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await fetch(`${API_URL}/api/users/signin`, {
+            const res = await fetch(`${API_URL}/api/users/signin`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
 
-            const data = await response.json();
+            const data = await res.json();
 
-            if (response.ok && data.success) {
-
-                // Fetch face token AFTER login success
-                try {
-                    const faceTokenResponse = await fetch(`${API_URL}/api/users/face-token/${formData.email}`);
-                    const faceTokenData = await faceTokenResponse.json();
-
-                    if (faceTokenResponse.ok && faceTokenData.success) {
-                        const token = faceTokenData.faceToken;
-
-                        setFaceToken(token);
-                        localStorage.setItem('faceToken', token);
-                    } else {
-                        console.warn('Face token error:', faceTokenData.message);
-                    }
-                } catch (err) {
-                    console.error('Face token fetch error:', err);
-                }
-
-                alert('User signed in successfully!');
-                localStorage.setItem('token', data.token);
-
-                handleAccInfo(formData.email);
-                handleFaceInfo(formData.email);
-
-                setFormData({ email: '', password: '' });
-
-                window.location.reload();
-
-            } else {
-                alert(data.message || 'Invalid credentials!');
+            if (!res.ok || !data.success) {
+                alert(data.message || "Invalid credentials");
+                return;
             }
 
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred while signing in.');
-        }
-    };
+            // ✅ Store auth token
+            localStorage.setItem('token', data.token);
 
-    const handleAccInfo = async (email) => {
-        try {
-            const response = await fetch(`${API_URL}/api/users/balance/set`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
+            // ✅ Parallel API calls (faster)
+            const [faceRes, accRes] = await Promise.all([
+                fetch(`${API_URL}/api/users/face-token/${formData.email}`),
+                fetch(`${API_URL}/api/users/accountno/${formData.email}`)
+            ]);
 
-            const data = await response.json();
+            const faceData = await faceRes.json();
+            const accData = await accRes.json();
 
-            if (response.ok && data.success) {
-                alert(`Account created successfully! Your Account Number: ${data.accountno}`);
-                localStorage.setItem('accountToken', data.accountToken);
+            // console.log(faceData);
+            console.log(accData);
+
+            // ✅ Store face token
+            if (faceRes.ok && faceData.success) {
+                localStorage.setItem('faceToken', faceData.token);
+                alert("Face token stored successfully");
             } else {
-                alert(data.message || 'Something went wrong!');
+                alert("Failed to retrieve face token");
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred while creating the account.');
-        }
-    };
 
-    const handleFaceInfo = async (email) => {
-        try {
-            const response = await fetch(`${API_URL}/api/users/store-face/set`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                alert(`Account created successfully! Your Account Number: ${data.accountno}`);
-                localStorage.setItem('faceToken', data.faceToken);
+            // ✅ Store account number
+            if (accRes.ok && accData.success) {
+                localStorage.setItem('accountToken', accData.token);
+                alert(accData.accountno)
             } else {
-                alert(data.message || 'Something went wrong!');
+                alert("Failed to retrieve account number");
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred while creating the account.');
+
+            // ✅ Reset form
+            setFormData({ email: '', password: '' });
+
+            // ✅ Redirect instead of reload
+            navigate('/');
+            window.location.reload(); // Optional: Only if you need to refresh the page after navigation
+
+        } catch (err) {
+            console.error(err);
+            alert("Something went wrong");
         }
     };
-
 
     return (
-        <div  >
-            <div className=' flex h-full justify-center items-center min-h-screen ' >
-                <form onSubmit={handleSubmit} className=' flex flex-col justify-center items-center space-y-4 p-16 bg-[#ffffff10] rounded-3xl  ' >
-                    <h2 className='font-lato text-3xl mb-12 ' >SignIn</h2>
-                    <div className='w-full min-w-[40vw] ' >
-                        <InputBox labelText='E-mail' inputName="email" inputValue={formData.email} inputChange={handleInputChange} parenCN='font-main' />
+        <div>
+            <div className='flex h-full justify-center items-center min-h-screen'>
+                <form
+                    onSubmit={handleSubmit}
+                    className='flex flex-col justify-center items-center space-y-4 p-16 bg-[#ffffff10] rounded-3xl'
+                >
+                    <h2 className='font-lato text-3xl mb-12'>Sign In</h2>
+
+                    <div className='w-full min-w-[40vw]'>
+                        <InputBox
+                            labelText='E-mail'
+                            inputName="email"
+                            inputValue={formData.email}
+                            inputChange={handleInputChange}
+                        />
                     </div>
-                    <div className='w-full min-w-[40vw] ' >
-                        <InputBox labelText='Password' inputName="password" inputValue={formData.password} inputChange={handleInputChange} inputType='password' showPassword='yes' parenCN='font-main' />
+
+                    <div className='w-full min-w-[40vw]'>
+                        <InputBox
+                            labelText='Password'
+                            inputName="password"
+                            inputValue={formData.password}
+                            inputChange={handleInputChange}
+                            inputType='password'
+                            showPassword='yes'
+                        />
                     </div>
-                    <button className='bg-green text-black w-full py-2 rounded-xl ' >
+
+                    <button className='bg-green text-black w-full py-2 rounded-xl'>
                         Submit
                     </button>
-                    <Link to="/register" className='text-end w-full' >Doesn't have an Account ?</Link>
+
+                    <Link to="/register" className='text-end w-full'>
+                        Doesn't have an Account?
+                    </Link>
                 </form>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default SignIn
+export default SignIn;

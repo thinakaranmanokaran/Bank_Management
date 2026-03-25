@@ -1,4 +1,5 @@
 const sendAccNo = require('../../utils/accountNo');
+const sendToken = require('../../utils/jwtHelper');
 const { Account } = require('./../../models/user/Account')
 const mongoose = require('mongoose');
 
@@ -147,3 +148,21 @@ exports.getUserEmailByAccNo = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+exports.getAccNoByEmail = async (req, res) => {
+    const email = req.params.email;
+    try {
+        const account = await Account.findOne({ email });
+        
+        if (!account) {
+            return res.status(404).json({ success: false, message: 'Account not found!' });
+        }
+
+        console.log(account);
+        // res.status(200).json({ success: true, accountno: account });
+        return sendToken( account , 200, res, "account");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+}

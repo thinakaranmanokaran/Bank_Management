@@ -3,10 +3,18 @@ import images from '../../assets/images'
 import { HiArrowUpRight } from "react-icons/hi2";
 import { useAuth } from "./../../contexts";
 import { Link } from "react-router-dom";
+import { LiaPowerOffSolid } from 'react-icons/lia';
 
 const LandingPage = () => {
 
     const { currentUser } = useAuth();
+
+    function LogOut() {
+        localStorage.removeItem("token")
+        localStorage.removeItem("accountToken")
+        localStorage.removeItem("faceToken")
+        window.location.reload(); 
+    }
 
     return (
         <div className=' bg-dark w-full h-full p-16 px-32 text-white ' >
@@ -29,22 +37,22 @@ const LandingPage = () => {
                                     <div className='h-[1px] w-full bg-green -translate-x-[110%]  group-hover:translate-x-0 transi duration-300  ' ></div>
                                 </Link>
                             </div> : !currentUser ? "" :
-                            <div className='flex space-x-4 text-sm ' >
-                                <Link to="/user/dashboard" className=' group overflow-hidden cursor-pointer hover:text-green transition-all duration-300 ' >
-                                    <div>Home</div>
-                                    <div className='h-[1px] w-full bg-green -translate-x-[110%]  group-hover:translate-x-0 transi duration-300  ' ></div>
-                                </Link>
-                                <Link to="/user/transactions" className=' group overflow-hidden cursor-pointer hover:text-green transition-all duration-300 ' >
-                                    <div>Transactions</div>
-                                    <div className='h-[1px] w-full bg-green -translate-x-[110%]  group-hover:translate-x-0 transi duration-300  ' ></div>
-                                </Link>
-                                <Link to="/user/wallet" className=' group overflow-hidden cursor-pointer hover:text-green transition-all duration-300 ' >
-                                    <div>Wallet</div>
-                                    <div className='h-[1px] w-full bg-green -translate-x-[110%]  group-hover:translate-x-0 transi duration-300  ' ></div>
-                                </Link>
-                            </div>
+                                <div className='flex space-x-4 text-sm ' >
+                                    <Link to="/user/dashboard" className=' group overflow-hidden cursor-pointer hover:text-green transition-all duration-300 ' >
+                                        <div>Home</div>
+                                        <div className='h-[1px] w-full bg-green -translate-x-[110%]  group-hover:translate-x-0 transi duration-300  ' ></div>
+                                    </Link>
+                                    <Link to="/user/transactions" className=' group overflow-hidden cursor-pointer hover:text-green transition-all duration-300 ' >
+                                        <div>Transactions</div>
+                                        <div className='h-[1px] w-full bg-green -translate-x-[110%]  group-hover:translate-x-0 transi duration-300  ' ></div>
+                                    </Link>
+                                    <Link to="/user/wallet" className=' group overflow-hidden cursor-pointer hover:text-green transition-all duration-300 ' >
+                                        <div>Wallet</div>
+                                        <div className='h-[1px] w-full bg-green -translate-x-[110%]  group-hover:translate-x-0 transi duration-300  ' ></div>
+                                    </Link>
+                                </div>
                     }
-                    <div className=' w-full max-w-72 flex justify-end transition-all duration-300' >
+                    <div className=' w-full max-w-72 flex justify-end transition-all duration-300 items-center' >
                         {
                             currentUser ?
                                 <Link to={`${currentUser?.role === "user" ? "/user/dashboard" : currentUser?.role === "employee" ? "/employee/profile" : "/admin/employeeadd"}`} className=' flex justify-between items-center border-2 border-green rounded-full hover:pr-4 group transition-all duration-300 ' >
@@ -55,6 +63,11 @@ const LandingPage = () => {
                                 </Link> :
                                 <Link to='/register' className=' bg-green text-dark  px-4 py-1 text-base font-main rounded-md  ' >SignIn</Link>
                         }
+                    <div className="">
+                        {
+                            currentUser && <div className='text-3xl p-2 ml-6 bg-green  cursor-pointer transition-all duration-300 rounded-full text-black  ' onClick={LogOut} > <LiaPowerOffSolid /></div>
+                        }
+                        </div>
                     </div>
                 </div>
                 <div className='  text-white flex justify-between mt-20   ' >

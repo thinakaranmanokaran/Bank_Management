@@ -7,7 +7,7 @@ const { registerRequest, signinRequest } = require('../middlewares/global/Authen
 const { registerUser, signinUser, getUserNameByEmail, getAuthData, updateUserProfile, getAuthDataToken } = require('../controllers/global/Authentication');
 
 const { AccountRequest } = require('../middlewares/user/Account');
-const { addAccountDetails, getAccountDetails, updateAccountDetails, getUserEmailByAccNo, setAccountDetails, getAccountDetailsByEmail } = require('../controllers/user/Account');
+const { addAccountDetails, getAccountDetails, updateAccountDetails, getUserEmailByAccNo, setAccountDetails, getAccountDetailsByEmail, getAccNoByEmail } = require('../controllers/user/Account');
 
 const { verifyFace, registerFace, storeFace, signinFace, getFaceDataAsToken } = require('../controllers/global/FaceAuth');
 const { userDeposit } = require('../controllers/user/Deposit');
@@ -41,6 +41,7 @@ userRouter.put('/balance/:accountno', updateAccountDetails);
 
 userRouter.get('/email/:accountno', getUserEmailByAccNo);
 userRouter.get('/name/:email', getUserNameByEmail);
+userRouter.get('/accountno/:email', getAccNoByEmail);
 
 userRouter.post('/deposit', DepositRequest, userDeposit.createDeposit );
 userRouter.get('/deposit', userDeposit.getAllDeposits );

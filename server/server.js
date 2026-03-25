@@ -4,6 +4,7 @@ const connectDB = require('./config/db');
 const userRouter = require('./routes/userRoutes');
 // const adminRouter = require('./routes/adminRoutes');
 const cors = require('cors');
+const cibilrouter = require('./routes/aiCibil');
 // app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
 
@@ -16,6 +17,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/users', userRouter);
+app.use('/api', cibilrouter);
 // app.use('/api/admin', adminRouter);
 
 // Error handling for undefined routes

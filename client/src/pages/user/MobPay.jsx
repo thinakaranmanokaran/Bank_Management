@@ -58,6 +58,13 @@ const MobPay = () => {
     };
 
     const handleVerify = async () => {
+
+        if (currentAcc?.accountno === accNumber) {
+            setError("You cannot send money to your own account");
+            // alert("You cannot send money to your own account");
+            return;
+        }
+
         try {
             const emailResponse = await axios.get(`${API_URL}/api/users/email/${accNumber}`);
             setEmail(emailResponse.data.email);

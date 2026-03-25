@@ -18,6 +18,7 @@ const Header = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const { currentAcc } = useAcc();
+    const AccountNo = localStorage.getItem("accountno");
 
 
     const [options, showOptions] = useState(false);
@@ -31,6 +32,7 @@ const Header = () => {
         localStorage.removeItem("accountToken")
         localStorage.removeItem("faceToken")
         navigate('/');
+        window.location.reload();
     }
 
 
@@ -40,14 +42,18 @@ const Header = () => {
                 const response = await axios.get(`${API_URL}/api/users/notification/${currentAcc?.accountno}`);
                 setNotificationData(response.data);
             } catch (err) {
-                setError(err.response?.data?.message || 'Error fetching deposits');
+                setError(err.response?.data?.message || 'Error fetching notifications');
             } finally {
                 setLoading(false);
             }
         };
 
+        console.log(currentAcc)
+
         if (currentAcc?.accountno) {
             fetchNotifications();
+        } else {
+            setLoading(false); // ✅ IMPORTANT FIX
         }
     }, [API_URL, currentAcc?.accountno]);
 
@@ -107,7 +113,7 @@ const Header = () => {
                     <div className='text-2xl p-3 hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' onClick={() => showOptions(true)} > <RiSettings4Fill /></div>
                     <div className='text-3xl p-2 ml-6 bg-green  cursor-pointer transition-all duration-300 rounded-full text-black  ' onClick={() => setLogout(true)} > <LiaPowerOffSolid /></div>
                 </div>
-                {logout && <div className=' absolute bg-black p-6 max-w-60 w-full h-fit max-h-60 font-sfpro top-32 right-6 rounded-3xl' >
+                {logout && <div className=' absolute bg-black p-6 max-w-60 w-full h-fit max-h-60 font-sfpro top-32 right-6 rounded-3xl z-10' >
                     <div className='text-center text-lg ' >Did you want Logout the Current Account ?</div>
                     <div className=' flex space-x-2 mt-5 items-center ' >
                         <button onClick={() => setLogout(false)} className='bg-white text-dark  px-4 py-1.5 rounded-full w-full  cursor-pointer ' >Cancel</button>
