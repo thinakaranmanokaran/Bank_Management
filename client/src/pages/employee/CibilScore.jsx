@@ -20,6 +20,7 @@ const CibilScore = () => {
     const [deposits, setDeposits] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
+    const [aiData, setAiData] = useState(null);
     const API_URL = import.meta.env.VITE_API_URL;
 
     const [score, setScore] = useState(0);
@@ -42,8 +43,12 @@ const CibilScore = () => {
                 const loandata = await axios.get(`${API_URL}/api/users/loan/application/${accountno}`);
                 setLoanData(loandata.data);
 
+                // ✅ CALL AI AFTER DATA LOAD
+                const aiRes = await axios.get(`${API_URL}/api/analyze-cibil/${accountno}`);
+                setAiData(aiRes.data.data);
+                console.log("Data : ",aiRes);
             } catch (error) {
-                setError('Error fetching data:', error);
+                setError('Error fetching data');
             } finally {
                 setLoading(false);
             }
@@ -82,24 +87,30 @@ const CibilScore = () => {
     };
 
     const handleApprove = async () => {
-        if (!window.confirm(`Are you sure you want to approve the Loan for Account No: ${accountno}?`)) return;
-
-        const notificationData = {
-            accountno: accountno,
-            type: "loan",
-            message: `Loan Approved!`,
+        if (aiData?.ai?.recommendation === "Reject") {
+            alert("AI suggests rejecting this loan");
+            return;
         }
+
+        if (!window.confirm(`Approve Loan for ${accountno}?`)) return;
 
         try {
             const response = await axios.put(`${API_URL}/api/users/balance/${accountno}`, {
                 balance: loanData?.loanamount,
             });
-            await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
+
+            await axios.post(`${API_URL}/api/users/notification/store`, {
+                accountno,
+                type: "loan",
+                message: `Loan Approved!`,
+            });
+
             alert(response.data.message);
-            handleClear()
+            handleClear();
             navigate('/employee/loan');
+
         } catch (err) {
-            alert(err.response?.data?.message || 'Failed to approve deposit');
+            alert(err.response?.data?.message || 'Failed');
         }
     };
 
@@ -186,7 +197,7 @@ const CibilScore = () => {
         return Math.max(400, Math.min(900, Math.round(normalizedScore)));
     };
 
-    const scoreValue = calculateScore();
+    const scoreValue = aiData?.ai?.score || calculateScore();
 
     const data = {
         labels: ['Score', 'Remaining'],
@@ -195,7 +206,7 @@ const CibilScore = () => {
                 label: 'Cibil Score',
                 data: [scoreValue, 1800 - scoreValue],
                 backgroundColor: ['rgba(184, 240, 17, 0.8)', 'rgba(220, 220, 220, 0.3)'],
-                borderColor: [`${calculateScore >= 700 ? "rgba(184, 240, 17, 1)" : calculateScore >= 500 ? "rgba(133, 133, 133, 1)" : " rgb(251 44 54)"}`, "rgba(8, 8, 8)"],
+                borderColor: [`${scoreValue >= 700 ? "rgba(184, 240, 17, 1)" : scoreValue >= 500 ? "rgba(133, 133, 133, 1)" : " rgb(251 44 54)"}`, "rgba(8, 8, 8)"],
                 borderWidth: 2,
                 hoverOffset: 4,
             },
@@ -261,7 +272,7 @@ const CibilScore = () => {
                             {/* <div className='w-80 h-80 border-green  border-[1px] rounded-full  ' ></div> */}
                             <div className='pb-6 ' >
                                 <div className='font-jet text-4xl flex pb-4 ' >
-                                    <div className={` mr-2 ${calculateScore >= 700 ? "text-green " : calculateScore >= 500 ? "text-light" : " text-red-500"}`} >{calculateScore()}</div>
+                                    <div className={` mr-2 ${scoreValue >= 700 ? "text-green " : scoreValue >= 500 ? "text-light" : " text-red-500"}`} >{scoreValue}</div>
                                     <div>/ 900</div>
                                 </div>
                                 <div className='font-main text-lg text-center ' >Current Cibil score</div>
@@ -281,6 +292,13 @@ const CibilScore = () => {
                             {calculateScore() >= 700 && calculateScore() < 800 && <div>This application looks good; a few checks are recommended.</div>}
                             {calculateScore() >= 800 && <div>The CIBIL score is excellent; this application is highly recommended for approval.</div>}
                         </div>
+                        {aiData?.ai && (
+                            <div className='mt-4 text-center'>
+                                <div>Risk: {aiData.ai.risk}</div>
+                                <div>Recommendation: {aiData.ai.recommendation}</div>
+                                <div className='text-sm mt-2'>{aiData.ai.reason}</div>
+                            </div>
+                        )}
                         {/* <div>{loanData?.loanamount}, {balance}</div> */}
                     </div>
                 </div>

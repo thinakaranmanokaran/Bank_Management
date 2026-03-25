@@ -4,7 +4,8 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 // ✅ Import your models
 const Transaction = require("../models/user/Transactions");
 const Loan = require("../models/user/Loan");
-const Auth = require("../models/global/Authentication");
+const { Authentication } = require("../models/global/Authentication");
+const { Account } = require("../models/user/Account");
 
 const router = express.Router();
 
@@ -31,9 +32,14 @@ router.get("/analyze-cibil/:accountno", async (req, res) => {
 
         const transactionsData = await Transaction.find({ accountno });
         const loanData = await Loan.findOne({ accountno });
+        const account = await Account.findOne({ accountno });
+
+        if (!account) {
+            return res.status(404).json({ message: "Account not found" });
+        }
 
         // get user via account → email → auth
-        const authData = await Auth.findOne({ accountno });
+        const authData = await Authentication.findOne({ email: account.email });
 
         if (!authData) {
             return res.status(404).json({ message: "User not found" });
@@ -61,6 +67,13 @@ router.get("/analyze-cibil/:accountno", async (req, res) => {
         const activeDays = uniqueDates.length;
 
         const loanHistory = loanData || {};
+
+        console.log({
+            transactions,
+            accountAge,
+            activeDays,
+            loanHistory
+        });
 
         // =========================
         // ✅ 3. Gemini Prompt
@@ -102,26 +115,48 @@ Return ONLY valid JSON:
         // ✅ 4. Call Gemini
         // =========================
 
-        const result = await model.generateContent(prompt);
-        const text = await result.response.text();
+        let text;
+
+        try {
+            const result = await model.generateContent(prompt);
+            text = await result.response.text();
+        } catch (err) {
+            console.log("❌ Gemini Error:", err);
+
+            return res.json({
+                success: true,
+                data: {
+                    accountno,
+                    transactions,
+                    accountAge,
+                    activeDays,
+                    ai: {
+                        score: calculateFallbackScore(transactions, accountAge, activeDays),
+                        risk: "Medium",
+                        recommendation: "Review",
+                        reason: "Gemini API failed",
+                    }
+                }
+            });
+        }
 
         let aiResponse;
 
-        try {
-            aiResponse = JSON.parse(text);
-        } catch (err) {
-            console.log("⚠️ AI RAW RESPONSE:", text);
+        let cleanedText = text
+            .replace(/```json/g, '')
+            .replace(/```/g, '')
+            .trim();
 
-            // fallback if AI fails
+        try {
+            aiResponse = JSON.parse(cleanedText);
+        } catch (err) {
+            console.log("⚠️ RAW AI:", text);
+
             aiResponse = {
-                score: calculateFallbackScore(
-                    transactions,
-                    accountAge,
-                    activeDays
-                ),
+                score: calculateFallbackScore(transactions, accountAge, activeDays),
                 risk: "Medium",
                 recommendation: "Review",
-                reason: "Fallback due to AI parsing issue",
+                reason: "AI parsing failed",
             };
         }
 

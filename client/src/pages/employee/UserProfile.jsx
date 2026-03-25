@@ -117,7 +117,7 @@ const UserProfile = () => {
                             <p className='text-light  ' >Role: </p> <div>{authData?.role}</div>
                         </div>
                         <div className="flex space-x-2 ">
-                            <p className='text-light  ' >Created At: </p><div>{new Date(authData?.createdAt).toLocaleDateString()}</div>
+                            <p className='text-light  ' >Registered at: </p><div>{new Date(authData?.createdAt).toLocaleDateString()}</div>
                         </div>
                     </div>
                     <Link to={`/employee/cibil-score/d/${accountno}`} onClick={handleSubmit}  >
@@ -173,7 +173,7 @@ const UserProfile = () => {
                             <p className='text-light'>Loan Purpose:</p> <div>{loanData?.loanpurpose}</div>
                         </div>
                         <div className="flex space-x-2">
-                            <p className='text-light'>Submitted At:</p> <div>{new Date(loanData?.submittedat).toLocaleDateString()}</div>
+                            <p className='text-light'>Applied at:</p> <div>{new Date(loanData?.submittedat).toLocaleDateString()}</div>
                         </div>
                     </div>
 
