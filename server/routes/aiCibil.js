@@ -1,17 +1,23 @@
-const express = require("express");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+"use server";
 
-// ✅ Import your models
+const express = require("express");
+const OpenAI = require("openai");
+
+// ✅ Models
 const Transaction = require("../models/user/Transactions");
 const Loan = require("../models/user/Loan");
 const { Authentication } = require("../models/global/Authentication");
 const { Account } = require("../models/user/Account");
 
-const router = express.Router();
+const cibilrouter = express.Router();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// ✅ GROQ CONFIG (OpenAI compatible)
+const openai = new OpenAI({
+    apiKey: "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",
+    baseURL: "https://api.groq.com/openai/v1",
+});
 
-// ✅ Helper: fallback score (your logic simplified)
+// ✅ Fallback logic
 const calculateFallbackScore = (transactions, accountAge, activeDays) => {
     let score = transactions * accountAge * activeDays;
 
@@ -22,12 +28,16 @@ const calculateFallbackScore = (transactions, accountAge, activeDays) => {
     return Math.max(400, Math.min(900, Math.round(normalized)));
 };
 
-router.get("/analyze-cibil/:accountno", async (req, res) => {
+cibilrouter.get("/analyze-cibil/:accountno", async (req, res) => {
     try {
         const { accountno } = req.params;
 
+        if (!accountno) {
+            return res.status(400).json({ message: "Account number required" });
+        }
+
         // =========================
-        // ✅ 1. Fetch Data from DB
+        // ✅ 1. Fetch Data
         // =========================
 
         const transactionsData = await Transaction.find({ accountno });
@@ -38,7 +48,6 @@ router.get("/analyze-cibil/:accountno", async (req, res) => {
             return res.status(404).json({ message: "Account not found" });
         }
 
-        // get user via account → email → auth
         const authData = await Authentication.findOne({ email: account.email });
 
         if (!authData) {
@@ -68,103 +77,79 @@ router.get("/analyze-cibil/:accountno", async (req, res) => {
 
         const loanHistory = loanData || {};
 
-        console.log({
+        console.log("📊 DATA:", {
             transactions,
             accountAge,
             activeDays,
-            loanHistory
         });
 
         // =========================
-        // ✅ 3. Gemini Prompt
+        // ✅ 3. AI CALL (GROQ)
         // =========================
 
-        const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
-        });
+        let aiResponse;
 
-        const prompt = `
-You are an Indian banking credit risk AI similar to CIBIL.
+        try {
+            const completion = await openai.chat.completions.create({
+                model: "llama-3.3-70b-versatile", // 🔥 best free model
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a banking credit scoring AI like CIBIL."
+                    },
+                    {
+                        role: "user",
+                        content: `
+Analyze this user:
 
-Strictly analyze the following user:
-
-Transactions count: ${transactions}
-Account age (days): ${accountAge}
+Transactions: ${transactions}
+Account age: ${accountAge}
 Active days: ${activeDays}
 Loan history: ${JSON.stringify(loanHistory)}
 
 Rules:
-- Score must be between 300 and 900
-- Less transactions = risky
-- Low active days = risky
+- Score between 300 and 900
+- Low activity = risky
 - New account = risky
 - Existing loan = risky
-- Good activity = high score
 
-Return ONLY valid JSON:
-
+Return ONLY JSON:
 {
   "score": number,
-  "risk": "Low" | "Medium" | "High",
-  "recommendation": "Approve" | "Reject" | "Review",
+  "risk": "Low|Medium|High",
+  "recommendation": "Approve|Reject|Review",
   "reason": "short explanation"
 }
-`;
-
-        // =========================
-        // ✅ 4. Call Gemini
-        // =========================
-
-        let text;
-
-        try {
-            const result = await model.generateContent(prompt);
-            text = await result.response.text();
-        } catch (err) {
-            console.log("❌ Gemini Error:", err);
-
-            return res.json({
-                success: true,
-                data: {
-                    accountno,
-                    transactions,
-                    accountAge,
-                    activeDays,
-                    ai: {
-                        score: calculateFallbackScore(transactions, accountAge, activeDays),
-                        risk: "Medium",
-                        recommendation: "Review",
-                        reason: "Gemini API failed",
+                        `
                     }
-                }
+                ],
+                temperature: 0.3,
             });
-        }
 
-        let aiResponse;
+            let text = completion.choices[0].message.content;
 
-        let cleanedText = text
-            .replace(/```json/g, '')
-            .replace(/```/g, '')
-            .trim();
+            // Clean markdown if present
+            text = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
-        try {
-            aiResponse = JSON.parse(cleanedText);
+            aiResponse = JSON.parse(text);
+
         } catch (err) {
-            console.log("⚠️ RAW AI:", text);
+            console.log("❌ GROQ ERROR:", err.message);
 
+            // fallback
             aiResponse = {
                 score: calculateFallbackScore(transactions, accountAge, activeDays),
-                risk: "Medium",
-                recommendation: "Review",
-                reason: "AI parsing failed",
+                risk: transactions < 5 ? "High" : "Medium",
+                recommendation: transactions < 5 ? "Reject" : "Review",
+                reason: "AI failed, fallback used",
             };
         }
 
         // =========================
-        // ✅ 5. Final Response
+        // ✅ FINAL RESPONSE
         // =========================
 
-        res.json({
+        return res.json({
             success: true,
             data: {
                 accountno,
@@ -174,14 +159,15 @@ Return ONLY valid JSON:
                 ai: aiResponse,
             },
         });
-    } catch (error) {
-        console.error("❌ AI CIBIL ERROR:", error);
 
-        res.status(500).json({
+    } catch (error) {
+        console.error("❌ FINAL ERROR:", error);
+
+        return res.status(500).json({
             success: false,
             message: "AI CIBIL analysis failed",
         });
     }
 });
 
-module.exports = router;
+module.exports = cibilrouter;
