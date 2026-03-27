@@ -23,6 +23,30 @@ const Register = () => {
         }
     }, [navigate]);
 
+    const handleAccInfo = async (email) => {
+        try {
+            const response = await fetch(`${API_URL}/api/users/balance`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+
+            let data = await response.json();
+            // alert(data);
+            // console.log(data);
+
+            if (response.ok && data.success) {
+                alert(`Account created successfully! Your Account Number: ${data.data.accountno}`);
+                localStorage.setItem('accountToken', data.accountToken);
+            } else {
+                alert(data.message || 'Something went wrong!');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while creating the account.');
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -46,35 +70,15 @@ const Register = () => {
                 setFormData({ name: '', email: '', phone: '', password: '', gender: '', dob: '', img: '' });
                 // navigate('/');
                 // Reload it
-                window.location.reload();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             } else {
                 alert(data.message || 'Something went wrong!');
             }
         } catch (error) {
             console.error('Error:', error);
             alert('An error occurred while registering.');
-        }
-    };
-
-    const handleAccInfo = async (email) => {
-        try {
-            const response = await fetch(`${API_URL}/api/users/balance`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                alert(`Account created successfully! Your Account Number: ${data.accountno}`);
-                localStorage.setItem('accountToken', data.accountToken);
-            } else {
-                alert(data.message || 'Something went wrong!');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred while creating the account.');
         }
     };
 

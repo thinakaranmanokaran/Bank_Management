@@ -74,7 +74,7 @@ const LandingPage = () => {
                     <div className=' py-4 bg-gradient-to-r from-slate-50 to-neutral-400 bg-clip-text text-transparent font-lato text-6xl   ' >Manage your Financial Properties or Assets with our Greatest Savage <span className='text-green ' >!</span></div>
                 </div>
                 <div className=' flex justify-center ' >
-                    <img src={images.Security} alt="" className='w-[96] rotate-9  ' srcset="" />
+                    <img src={images.Security} alt="" className='w-[96] rotate-9  ' srcSet="" />
                 </div>
             </div>
         </div>

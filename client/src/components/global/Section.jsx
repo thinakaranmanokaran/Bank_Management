@@ -28,7 +28,7 @@ const Section = () => {
                         </div>
                     </div>
                     <div className='w-3/5 flex justify-end' >
-                        <img src={images.Wallet} className='h-[450px] object-cover  ' alt="" srcset="" />
+                        <img src={images.Wallet} className='h-[450px] object-cover  ' alt="" srcSet="" />
                     </div>
                 </div>
             </div>

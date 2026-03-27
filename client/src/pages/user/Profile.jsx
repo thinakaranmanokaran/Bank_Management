@@ -70,7 +70,7 @@ const Profile = () => {
                     {
                         ImageChoose.map((Data, index) => (
                             <div key={Data.id} className={` transition-all duration-300 rounded-full cursor-pointer p-1 w-fit ${selectProfile === Data.id ? "border-2 transition-all duration-300 border-green " : "transition-all duration-300 border-none"}  `}  >
-                                <img onClick={() => setSelectProfile(Data.id)} className={`${selectProfile === Data.id ? "max-h-[108px] w-[108px]" : "w-28 max-h-28 "} object-cover object-top rounded-full  `} src={Data.img} alt="" srcset="" />
+                                <img onClick={() => setSelectProfile(Data.id)} className={`${selectProfile === Data.id ? "max-h-[108px] w-[108px]" : "w-28 max-h-28 "} object-cover object-top rounded-full  `} src={Data.img} alt="" srcSet="" />
                             </div>
                         ))
                     }

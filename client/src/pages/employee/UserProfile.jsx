@@ -121,7 +121,7 @@ const UserProfile = () => {
                         </div>
                     </div>
                     <Link to={`/employee/cibil-score/d/${accountno}`} onClick={handleSubmit}  >
-                        <div className=' w-full text-center cursor-pointer font-sfpro  bg-green text-dark py-4 rounded-3xl text-xl mt-6 flex items-center justify-center space-x-4' > <span>Check Cibil Score</span> <img src={images.Star} className='w-8 h-8 -ml-3' alt="" srcset="" /> </div>
+                        <div className=' w-full text-center cursor-pointer font-sfpro  bg-green text-dark py-4 rounded-3xl text-xl mt-6 flex items-center justify-center space-x-4' > <span>Check Cibil Score</span> <img src={images.Star} className='w-8 h-8 -ml-3' alt="" srcSet="" /> </div>
                     </Link>
                 </div>
                 <div>
