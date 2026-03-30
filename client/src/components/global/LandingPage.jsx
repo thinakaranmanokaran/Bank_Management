@@ -13,7 +13,7 @@ const LandingPage = () => {
         localStorage.removeItem("token")
         localStorage.removeItem("accountToken")
         localStorage.removeItem("faceToken")
-        window.location.reload(); 
+        window.location.reload();
     }
 
     return (
@@ -63,10 +63,10 @@ const LandingPage = () => {
                                 </Link> :
                                 <Link to='/register' className=' bg-green text-dark  px-4 py-1 text-base font-main rounded-md  ' >SignIn</Link>
                         }
-                    <div className="">
-                        {
-                            currentUser && <div className='text-3xl p-2 ml-6 bg-green  cursor-pointer transition-all duration-300 rounded-full text-black  ' onClick={LogOut} > <LiaPowerOffSolid /></div>
-                        }
+                        <div className="">
+                            {
+                                currentUser && <div className='text-3xl p-2 ml-6 bg-green  cursor-pointer transition-all duration-300 rounded-full text-black  ' onClick={LogOut} > <LiaPowerOffSolid /></div>
+                            }
                         </div>
                     </div>
                 </div>

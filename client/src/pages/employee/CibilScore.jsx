@@ -5,6 +5,7 @@ import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, plugins } from 'chart.js';
 import { useBalance } from '../../contexts';
 import { RiAlarmWarningLine } from "react-icons/ri";
+import { TextEffect } from '../../components/global/text-effect';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -22,6 +23,7 @@ const CibilScore = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const [aiData, setAiData] = useState(null);
+    const [showAIText, setShowAIText] = useState(false);
     const API_URL = import.meta.env.VITE_API_URL;
 
     const [score, setScore] = useState(0);
@@ -84,16 +86,15 @@ const CibilScore = () => {
                 }
 
                 // 5️⃣ AI (IMPORTANT — should NOT break everything)
-                // try {
-                //     const aiRes = await axios.get(
-                //         `${API_URL}/api/analyze-cibil/${accountno}`
-                //     );
-                //     setAiData(aiRes.data?.data);
-                //     console.log("AI Data:", aiRes.data);
-                // } catch (err) {
-                //     console.error("AI Error:", err.response?.data || err.message);
-                // }
-
+                try {
+                    const aiRes = await axios.get(
+                        `${API_URL}/api/analyze-cibil/${accountno}`
+                    );
+                    setAiData(aiRes.data?.data);
+                    console.log("AI Data:", aiRes.data);
+                } catch (err) {
+                    console.error("AI Error:", err.response?.data || err.message);
+                }
             } catch (error) {
                 console.error("Unexpected Error:", error);
                 setError("Something went wrong");
@@ -106,6 +107,16 @@ const CibilScore = () => {
             fetchData();
         }
     }, [accountno, API_URL]);
+
+    useEffect(() => {
+        if (aiData) {
+            const timer = setTimeout(() => {
+                setShowAIText(true);
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [aiData]);
 
     // Delete Deposit Function
     const handleDelete = async () => {
@@ -137,17 +148,28 @@ const CibilScore = () => {
     };
 
     const handleApprove = async () => {
+        // 🔴 Step 1: AI Warning
         if (aiData?.ai?.recommendation === "Reject") {
-            alert("AI suggests rejecting this loan");
-            return;
+            const proceed = window.confirm(
+                "⚠️ AI recommends rejecting this loan application.\nDo you still want to approve?"
+            );
+
+            // ❌ If user cancels → STOP
+            if (!proceed) return;
         }
 
-        if (!window.confirm(`Approve Loan for ${accountno}?`)) return;
+        // 🟡 Step 2: Final Confirmation
+        const confirmApprove = window.confirm(`Approve Loan for ${accountno}?`);
+        if (!confirmApprove) return;
 
         try {
-            const response = await axios.put(`${API_URL}/api/users/balance/${accountno}`, {
-                balance: loanData?.loanamount,
-            });
+            // 🟢 Step 3: Approve
+            const response = await axios.put(
+                `${API_URL}/api/users/balance/${accountno}`,
+                {
+                    balance: loanData?.loanamount,
+                }
+            );
 
             await axios.post(`${API_URL}/api/users/notification/store`, {
                 accountno,
@@ -156,6 +178,7 @@ const CibilScore = () => {
             });
 
             alert(response.data.message);
+
             handleClear();
             navigate('/employee/loan');
 
@@ -280,7 +303,7 @@ const CibilScore = () => {
         return (
             <div className="flex justify-center w-full  ">
                 <div className="text-center text-black mt-10 bg-white p-4 h-fit rounded-2xl">
-                    <RiAlarmWarningLine className='fill-red-500 inline pb-0.5 size-6' /> No transactions found for this account, so cannot calculate <span className="font-bold">CIBIL score</span>. 
+                    <RiAlarmWarningLine className='fill-red-500 inline pb-0.5 size-6' /> No transactions found for this account, so cannot calculate <span className="font-bold">CIBIL score</span>.
                 </div>
             </div>
         );
@@ -295,45 +318,44 @@ const CibilScore = () => {
 
     return (
         <div className='bg-black h-full overflow-hidden w-full ' >
-            <div className='flex space-x-6  w-full' >
-                <div>
-                    <div className='space-y-6'>
-                        <div className='bg-dark p-6 rounded-4xl min-w-80'>
-                            <div className='text-light mb-8 text-base font-sfreg'>Transactions</div>
-                            <div className='flex items-end space-x-4'>
-                                <div className={`w-full h-1 min-w-40 rounded-4xl ${transactions >= 50 ? 'bg-green' : transactions >= 30 ? 'bg-light' : 'bg-red-500'}`}></div>
-                                <div className={`text-4xl flex font-jet text-end ${transactions >= 50 ? 'text-green' : transactions >= 30 ? 'text-light' : 'text-red-500'}`}>
-                                    <div>{transactions}</div>
-                                    <div className='text-white'>/50</div>
+            <div className='flex  w-full' >
+                <div className=' w-full flex items-center justify-between' >
+                    <div>
+                        <div className='space-y-6'>
+                            <div className='bg-dark p-6 rounded-4xl min-w-80'>
+                                <div className='text-light mb-8 text-base font-sfreg'>Transactions</div>
+                                <div className='flex items-end space-x-4'>
+                                    <div className={`w-full h-1 min-w-40 rounded-4xl ${transactions >= 50 ? 'bg-green' : transactions >= 30 ? 'bg-light' : 'bg-red-500'}`}></div>
+                                    <div className={`text-4xl flex font-jet text-end ${transactions >= 50 ? 'text-green' : transactions >= 30 ? 'text-light' : 'text-red-500'}`}>
+                                        <div>{transactions}</div>
+                                        <div className='text-white'>/50</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className='bg-dark p-6 rounded-4xl min-w-80'>
-                            <div className='text-light mb-8 text-base font-sfreg'>Balance Maintenance</div>
-                            <div className='flex items-end space-x-4'>
-                                <div className={`w-full h-1 min-w-40 rounded-4xl ${minbalance >= 60 ? 'bg-green' : minbalance >= 40 ? 'bg-light' : 'bg-red-500'}`}></div>
-                                <div className={`text-4xl flex font-jet text-end ${minbalance >= 60 ? 'text-green' : minbalance >= 40 ? 'text-light' : 'text-red-500'}`}>
-                                    <div>{minbalance}</div>
-                                    <div className='text-white'>/60</div>
+                            <div className='bg-dark p-6 rounded-4xl min-w-80'>
+                                <div className='text-light mb-8 text-base font-sfreg'>Balance Maintenance</div>
+                                <div className='flex items-end space-x-4'>
+                                    <div className={`w-full h-1 min-w-40 rounded-4xl ${minbalance >= 60 ? 'bg-green' : minbalance >= 40 ? 'bg-light' : 'bg-red-500'}`}></div>
+                                    <div className={`text-4xl flex font-jet text-end ${minbalance >= 60 ? 'text-green' : minbalance >= 40 ? 'text-light' : 'text-red-500'}`}>
+                                        <div>{minbalance}</div>
+                                        <div className='text-white'>/60</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className='bg-dark p-6 rounded-4xl min-w-80'>
-                            <div className='text-light mb-8 text-base font-sfreg'>Active Days</div>
-                            <div className='flex items-end space-x-4'>
-                                <div className={`w-full h-1 min-w-40 rounded-4xl ${activedays >= 30 ? 'bg-green' : activedays >= 20 ? 'bg-light' : 'bg-red-500'}`}></div>
-                                <div className={`text-4xl flex font-jet text-end ${activedays >= 30 ? 'text-green' : activedays >= 20 ? 'text-light' : 'text-red-500'}`}>
-                                    <div>{activedays}</div>
-                                    <div className='text-white'>/30</div>
+                            <div className='bg-dark p-6 rounded-4xl min-w-80'>
+                                <div className='text-light mb-8 text-base font-sfreg'>Active Days</div>
+                                <div className='flex items-end space-x-4'>
+                                    <div className={`w-full h-1 min-w-40 rounded-4xl ${activedays >= 30 ? 'bg-green' : activedays >= 20 ? 'bg-light' : 'bg-red-500'}`}></div>
+                                    <div className={`text-4xl flex font-jet text-end ${activedays >= 30 ? 'text-green' : activedays >= 20 ? 'text-light' : 'text-red-500'}`}>
+                                        <div>{activedays}</div>
+                                        <div className='text-white'>/30</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div></div>
-                <div className=' w-full flex justify-center ' >
                     <div className='flex flex-col items-center -mt-32 ' >
                         <div className=' flex  justify-center items-end relative w-96 h-96 border-b-[1px] border-white' >
                             {/* <div className='w-80 h-80 border-green  border-[1px] rounded-full  ' ></div> */}
@@ -359,15 +381,42 @@ const CibilScore = () => {
                             {calculateScore() >= 700 && calculateScore() < 800 && <div>This application looks good; a few checks are recommended.</div>}
                             {calculateScore() >= 800 && <div>The CIBIL score is excellent; this application is highly recommended for approval.</div>}
                         </div>
-                        {aiData?.ai && (
+                    </div>
+                    <div className='mt-6 text-center h-fit bg-white/10 p-6 max-w-[25vw] rounded-3xl'>
+                        {!showAIText ? (
+                            <div className="w-full">
+                                <h2 className="font-gotham text-2xl tracking-tighter mb-6">🤖 Analyzing AI Response...</h2>
+                                <div className="flex flex-col items-center min-w-[20vw]">
+                                    <div className="w-3/4 animate-pulse mt-2 h-6 bg-white/15 rounded-full"></div>
+                                    <div className="w-full mt-2 animate-pulse h-6 bg-white/15 rounded-full"></div>
+                                    <div className="w-full mt-2 animate-pulse h-6 bg-white/15 rounded-full"></div>
+                                    <div className="w-full mt-2 animate-pulse h-6 bg-white/15 rounded-full"></div>
+                                    <div className="w-3/5 mt-2 animate-pulse h-6 bg-white/15 rounded-full"></div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="text-lg font-lato text-light cursor-pointer">
+                                <h2 className="font-gotham text-2xl tracking-tighter mb-6 text-white">🤖 Analyzed AI Report</h2>
+                                <TextEffect per='word' as='h3' preset='blur'>
+                                    Score: <span className="text-white">{aiData?.ai?.score}</span> | Risk: <span className="text-white">{aiData?.ai?.risk}</span> | Result: <span className="text-white">{aiData?.ai?.recommendation}</span>
+                                </TextEffect>
+                                <TextEffect per='word' as='h3' preset='blur' className='font-gotham font-light mt-2'>
+                                    Reason: <span className="text-white text-wrap">{aiData?.ai?.reason}</span>.
+                                </TextEffect>
+                                <TextEffect per='word' as='h3' preset='blur' className='font-gotham font-light mt-2'>
+                                    Summary: <span className="text-white text-wrap line-clamp-3">{aiData?.ai?.summary}</span>
+                                </TextEffect>
+                            </div>
+                        )}
+                        {/* {aiData?.ai && (
                             <div className='mt-4 text-center'>
                                 <div>Risk: {aiData.ai.risk}</div>
                                 <div>Recommendation: {aiData.ai.recommendation}</div>
                                 <div className='text-sm mt-2'>{aiData.ai.reason}</div>
                             </div>
-                        )}
-                        {/* <div>{loanData?.loanamount}, {balance}</div> */}
+                        )} */}
                     </div>
+                    {/* <div>{loanData?.loanamount}, {balance}</div>  */}
                 </div>
             </div>
         </div>

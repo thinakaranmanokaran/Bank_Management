@@ -8,12 +8,13 @@ const Transaction = require("../models/user/Transactions");
 const Loan = require("../models/user/Loan");
 const { Authentication } = require("../models/global/Authentication");
 const { Account } = require("../models/user/Account");
+const { GROQ_API_KEY } = require("../env.js");
 
 const cibilrouter = express.Router();
 
 // ✅ GROQ CONFIG (OpenAI compatible)
 const openai = new OpenAI({
-    apiKey: "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",
+    apiKey: GROQ_API_KEY,
     baseURL: "https://api.groq.com/openai/v1",
 });
 
@@ -118,9 +119,10 @@ Return ONLY JSON:
   "score": number,
   "risk": "Low|Medium|High",
   "recommendation": "Approve|Reject|Review",
-  "reason": "short explanation"
+  "reason": "short explanation",
+  "summary": "One short professional paragraph explaining the decision clearly for UI display"
 }
-                        `
+`
                     }
                 ],
                 temperature: 0.3,
