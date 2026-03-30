@@ -95,6 +95,9 @@ const MobPay = () => {
 
 
     const handleTransaction = async () => {
+        setError('');
+        setSuccess('');
+
         const transactionData = {
             senderaccountno: currentAcc?.accountno,
             sendername: currentUser?.name,
@@ -113,34 +116,54 @@ const MobPay = () => {
             accountno: accNumber,
             name: currentUser?.name,
             type: "transaction",
-            message: `${name} sent ₹${amount} to your account `,
-        }
+            message: `${name} sent ₹${amount} to your account`,
+        };
 
         try {
-            // Step 1: Create Transaction
-            await axios.post(`${API_URL}/api/users/transaction`, transactionData);
+            // ✅ Step 1: Create Transaction
+            try {
+                await axios.post(`${API_URL}/api/users/transaction`, transactionData);
+            } catch (err) {
+                console.error("Transaction API Error:", err.response?.data || err.message);
+                throw new Error(err.response?.data?.error || "Transaction record failed");
+            }
 
+            // ✅ Step 2: Deduct Sender Balance
+            try {
+                await axios.put(`${API_URL}/api/users/balance/${currentAcc?.accountno}`, {
+                    balance: -Number(amount),
+                });
+            } catch (err) {
+                throw new Error("Failed to deduct sender balance");
+            }
 
-            // Step 2: Deduct Amount from Sender's Balance
-            await axios.put(`${API_URL}/api/users/balance/${currentAcc?.accountno}`, {
-                balance: -Number(amount), // Deduct from sender
-            });
+            // ✅ Step 3: Add Receiver Balance
+            try {
+                await axios.put(`${API_URL}/api/users/balance/${accNumber}`, {
+                    balance: Number(amount),
+                });
+            } catch (err) {
+                throw new Error("Failed to credit receiver");
+            }
 
-            // Step 3: Add Amount to Receiver's Balance
-            await axios.put(`${API_URL}/api/users/balance/${accNumber}`, {
-                balance: Number(amount), // Add to receiver
-            });
+            // ✅ Step 4: Notification (optional → don’t break flow)
+            try {
+                await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
+            } catch (err) {
+                console.warn("Notification failed:", err.response?.data || err.message);
+            }
 
-            await axios.post(`${API_URL}/api/users/notification/store`, notificationData);
-
+            // ✅ SUCCESS
             setSuccess("Transaction successful!");
-            alert("Money sent successfully!")
-            navigate('/user/dashboard')
-            setError('');
+            alert("Money sent successfully!");
+            navigate('/user/dashboard');
+            window.location.reload();
+
         } catch (err) {
-            setError(err.response?.data?.message || 'Transaction failed');
-            alert("Money not sent ")
-            // alert(error)
+            console.error("Transaction Error:", err.message);
+
+            setError(err.message || "Transaction failed");
+            alert(err.message || "Money not sent");
         }
     };
 

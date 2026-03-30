@@ -8,7 +8,9 @@ import { RiCloseLargeLine } from "react-icons/ri";
 import { LiaPowerOffSolid } from "react-icons/lia";
 import formattedTime from '../../utils/Time';
 import axios from 'axios';
+import { TbReload } from "react-icons/tb";
 import { useAcc } from '../../contexts';
+import { RiHome2Line } from "react-icons/ri";
 
 const Header = () => {
 
@@ -87,6 +89,11 @@ const Header = () => {
         }
     };
 
+    //reload
+    const handleReload = () => {
+        window.location.reload();
+    }
+
     return (
         <div className='bg-[#ffffff10] p-4 rounded-full flex justify-between  ' >
             <div className='flex  items-center space-x-8 ' >
@@ -109,8 +116,10 @@ const Header = () => {
                     <div>{formattedTime}</div>
                 </div>
                 <div className='flex items-center -space-x-1' >
+                    <div className='text-2xl p-3 hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' onClick={handleReload} > <TbReload /></div>
                     <div onClick={() => showNotifications(true)} className='text-2xl p-3 relative hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' > <IoNotificationsOutline /> {notifcationData.length > 0 ? <div className={` absolute font-sfreg text-[12px] top-2 right-2 w-4 h-4 rounded-full flex justify-center items-center   bg-white text-dark  ${notifcationData.length > 10 ? "w-6 -mr-2" : ""}`} >{notifcationData.length > 9 ? "9+" : notifcationData.length}</div> : ""}</div>
                     <div className='text-2xl p-3 hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' onClick={() => showOptions(true)} > <RiSettings4Fill /></div>
+                    {/* <Link to="/" className='text-2xl p-3 hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' onClick={handleReload} > <RiHome2Line /></Link> */}
                     <div className='text-3xl p-2 ml-6 bg-green  cursor-pointer transition-all duration-300 rounded-full text-black  ' onClick={() => setLogout(true)} > <LiaPowerOffSolid /></div>
                 </div>
                 {logout && <div className=' absolute bg-black p-6 max-w-60 w-full h-fit max-h-60 font-sfpro top-32 right-6 rounded-3xl z-10' >

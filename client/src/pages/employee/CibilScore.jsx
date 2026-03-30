@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, plugins } from 'chart.js';
 import { useBalance } from '../../contexts';
+import { RiAlarmWarningLine } from "react-icons/ri";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -30,32 +31,81 @@ const CibilScore = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+
+            let accountRes = null;
+
             try {
-                const transactiondata = await axios.get(`${API_URL}/api/users/transaction/accountno/${accountno}`);
-                setTransactionData(transactiondata.data);
+                // 1️⃣ Transactions
+                try {
+                    const txnRes = await axios.get(
+                        `${API_URL}/api/users/transaction/accountno/${accountno}`
+                    );
+                    if (Array.isArray(txnRes.data)) {
+                        setTransactionData(txnRes.data);
+                    } else {
+                        setTransactionData([]); // fallback
+                        setError(txnRes.data?.error || "No transactions found");
+                    }
+                } catch (err) {
+                    console.error("Transaction Error:", err.response?.data || err.message);
+                }
 
-                const response = await axios.get(`${API_URL}/api/users/email/${accountno}`);
-                setAccount(response.data);
+                // 2️⃣ Account
+                try {
+                    accountRes = await axios.get(
+                        `${API_URL}/api/users/email/${accountno}`
+                    );
+                    setAccount(accountRes.data);
+                } catch (err) {
+                    console.error("Account Error:", err.response?.data || err.message);
+                }
 
-                const authdata = await axios.get(`${API_URL}/api/users/register/data/${response.data.email}`);
-                setAuthData(authdata.data);
+                // 3️⃣ Auth (depends on account)
+                if (accountRes?.data?.email) {
+                    try {
+                        const authRes = await axios.get(
+                            `${API_URL}/api/users/register/data/${accountRes.data.email}`
+                        );
+                        setAuthData(authRes.data);
+                    } catch (err) {
+                        console.error("Auth Error:", err.response?.data || err.message);
+                    }
+                }
 
-                const loandata = await axios.get(`${API_URL}/api/users/loan/application/${accountno}`);
-                setLoanData(loandata.data);
+                // 4️⃣ Loan
+                try {
+                    const loanRes = await axios.get(
+                        `${API_URL}/api/users/loan/application/${accountno}`
+                    );
+                    setLoanData(loanRes.data);
+                } catch (err) {
+                    console.error("Loan Error:", err.response?.data || err.message);
+                }
 
-                // ✅ CALL AI AFTER DATA LOAD
-                const aiRes = await axios.get(`${API_URL}/api/analyze-cibil/${accountno}`);
-                setAiData(aiRes.data.data);
-                console.log("Data : ",aiRes);
+                // 5️⃣ AI (IMPORTANT — should NOT break everything)
+                // try {
+                //     const aiRes = await axios.get(
+                //         `${API_URL}/api/analyze-cibil/${accountno}`
+                //     );
+                //     setAiData(aiRes.data?.data);
+                //     console.log("AI Data:", aiRes.data);
+                // } catch (err) {
+                //     console.error("AI Error:", err.response?.data || err.message);
+                // }
+
             } catch (error) {
-                setError('Error fetching data');
+                console.error("Unexpected Error:", error);
+                setError("Something went wrong");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchData();
-    }, []);
+        if (accountno) {
+            fetchData();
+        }
+    }, [accountno, API_URL]);
 
     // Delete Deposit Function
     const handleDelete = async () => {
@@ -137,14 +187,15 @@ const CibilScore = () => {
         }).format(new Date(dateString));
     };
 
-    const uniqueDates = [...new Set(transactionData.map(data => data.createdAt.split('T')[0]))];
+    const safeTransactions = Array.isArray(transactionData) ? transactionData : [];
+    const uniqueDates = safeTransactions.length ? [...new Set(safeTransactions.map(data => data.createdAt.split('T')[0]))] : [];
 
-    const transactions = transactionData?.length;
+    const transactions = safeTransactions.length;
     const minbalance = Math.ceil((new Date() - new Date(authData?.createdAt)) / (1000 * 60 * 60 * 24));
     const activedays = uniqueDates.length;
 
     const calculateScore = () => {
-        if (!transactionData.length || !authData.createdAt) return 300;
+        if (!safeTransactions.length || !authData?.createdAt) return 300;
 
         const transactions = transactionData.length;
         const minbalance = Math.ceil((new Date() - new Date(authData.createdAt)) / (1000 * 60 * 60 * 24));
@@ -224,6 +275,22 @@ const CibilScore = () => {
         },
         cutout: '100%',
     };
+
+    if (!transactionData.length) {
+        return (
+            <div className="flex justify-center w-full  ">
+                <div className="text-center text-black mt-10 bg-white p-4 h-fit rounded-2xl">
+                    <RiAlarmWarningLine className='fill-red-500 inline pb-0.5 size-6' /> No transactions found for this account, so cannot calculate <span className="font-bold">CIBIL score</span>. 
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="text-red-500">{error}</div>
+        )
+    }
 
 
     return (

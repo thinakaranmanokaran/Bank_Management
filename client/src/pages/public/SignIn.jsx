@@ -116,10 +116,11 @@ const SignIn = () => {
                     <button className='bg-green text-black w-full py-2 rounded-xl'>
                         Submit
                     </button>
-
-                    <Link to="/register" className='text-end w-full'>
-                        Doesn't have an Account?
-                    </Link>
+                    <div className="flex justify-end w-full">
+                        <Link to="/register" className='text-end cursor-pointer hover:text-green hover:underline'>
+                            Doesn't have an Account?
+                        </Link>
+                    </div>
                 </form>
             </div>
         </div>

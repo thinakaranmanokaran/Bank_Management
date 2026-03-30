@@ -120,10 +120,12 @@ const Register = () => {
                         <InputBox inputType='date' inputName="dob" inputValue={formData.dob} inputChange={handleInputChange} />
                     </div>
 
-                    <button className='bg-green text-black w-full py-2 rounded-xl' onClick={handleSubmit}>
+                    <button className='bg-green hover:scale-105 transition-all duration-300 text-black w-full py-2 rounded-xl cursor-pointer' onClick={handleSubmit}>
                         Submit
                     </button>
-                    <Link to="/signin" className='text-end w-full'>Already have an Account?</Link>
+                    <div className="flex w-full justify-end">
+                        <Link to="/signin" className=' cursor-pointer hover:text-green hover:underline'>Already have an Account?</Link>
+                    </div>
                 </div>
             </div>
         </div>

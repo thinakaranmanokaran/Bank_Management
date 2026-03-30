@@ -5,7 +5,7 @@ const Transaction = require('../../models/user/Transactions');
 const validateTransaction = async (req, res, next) => {
     const { senderaccountno, sendername, senderemail, recieveraccountno, recievername, recieveremail, amount, recievercurrbal, recieverupdatebal, sendercurrbal, senderupdatebal } = req.body;
 
-    if (!senderaccountno || !sendername || !senderemail || !recieveraccountno || !recievername || !recieveremail || !amount ||  !recievercurrbal  || !recieverupdatebal  || !sendercurrbal  ||  !senderupdatebal ) {
+    if (!senderaccountno == null || !sendername == null || !senderemail == null || !recieveraccountno == null || !recievername == null || !recieveremail == null || !amount || !recievercurrbal == null || !recieverupdatebal == null || !sendercurrbal || !senderupdatebal == null) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
