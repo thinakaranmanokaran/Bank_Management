@@ -117,3 +117,21 @@ input:-webkit-autofill:active {
   background-color: transparent !important;
   -webkit-text-fill-color: white !important; /* Apply text color */
 }
+
+
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+body {
+  top: 0px !important;
+}
+
+.goog-logo-link,
+.goog-te-gadget span {
+  display: none !important;
+}
+
+.goog-te-gadget {
+  font-size: 0px;
+}

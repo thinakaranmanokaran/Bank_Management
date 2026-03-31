@@ -61,14 +61,6 @@ const Header = () => {
     }, [API_URL, currentAcc?.accountno]);
 
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    // if (error) {
-    //     return <div className='text-red-500' >Error while Data fetch</div>;
-    // }
-
     const handleClear = async (id) => {
         try {
             await axios.delete(`${API_URL}/api/users/notification/${id}`);
@@ -96,20 +88,38 @@ const Header = () => {
     }
 
     const handleTranslate = () => {
-        // Implement translation logic here
-        const langToken = localStorage.getItem("language");
-        if(langToken) {
-            if(langToken === "en") {
-                localStorage.setItem("language", "ta");
-                window.location.reload(); // Reload the page to apply changes
-            } else {
-                localStorage.setItem("language", "en");
-                window.location.reload(); // Reload the page to apply changes
-            }
-        } else {
-            localStorage.setItem("language", "ta");
-            window.location.reload(); // Reload the page to apply changes
+        const select = document.querySelector(".goog-te-combo");
+        if (select) {
+            select.value = "ta"; // Tamil
+            select.dispatchEvent(new Event("change"));
         }
+    };
+
+    useEffect(() => {
+        const addScript = document.createElement("script");
+        addScript.src =
+            "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+        addScript.async = true;
+        document.body.appendChild(addScript);
+
+        window.googleTranslateElementInit = () => {
+            new window.google.translate.TranslateElement(
+                {
+                    pageLanguage: "en",
+                    includedLanguages: "ta,en",
+                    layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+                },
+                "google_translate_element"
+            );
+        };
+    }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div className='text-red-500' >Error while Data fetch</div>;
     }
 
     return (
@@ -135,7 +145,9 @@ const Header = () => {
                 </div>
                 <div className='flex items-center -space-x-1' >
                     <div className='text-2xl p-3 hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' onClick={handleReload} > <TbReload /></div>
-                    <div className='text-2xl p-3 hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' onClick={handleTranslate} > <BsTranslate /></div>
+                    {/* <div className='text-2xl p-3 hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' onClick={handleTranslate} > <BsTranslate /></div> */}
+                    {/* GOOGLE TRANSLATE */}
+                    {/* <div id="google_translate_element" className=' flex justify-center items-center overflow-hidden h-10 w-10'></div> */}
                     <div onClick={() => showNotifications(true)} className='text-2xl p-3 relative hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' > <IoNotificationsOutline /> {notifcationData.length > 0 ? <div className={` absolute font-sfreg text-[12px] top-2 right-2 w-4 h-4 rounded-full flex justify-center items-center   bg-white text-dark  ${notifcationData.length > 10 ? "w-6 -mr-2" : ""}`} >{notifcationData.length > 9 ? "9+" : notifcationData.length}</div> : ""}</div>
                     <div className='text-2xl p-3 hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white  ' onClick={() => showOptions(true)} > <RiSettings4Fill /></div>
                     <Link to="/" className='text-2xl p-3 hover:bg-[#ffffff20]  cursor-pointer transition-all duration-300 rounded-full text-white'> <RiHome2Line /></Link>
